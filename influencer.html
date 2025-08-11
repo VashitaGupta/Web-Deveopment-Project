@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>KreatorKart — Brand Dashboard</title>
+<title>KreatorKart — Home</title>
+
+<!-- Three.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -29,13 +34,27 @@
     overflow-x:hidden;
   }
 
+  /* ========== Full-screen 3D intro canvas ========== */
+  #introCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: block;
+    background: linear-gradient(180deg, rgba(7,18,38,0.6), rgba(7,18,38,0.9));
+  }
+  /* hidden after intro */
+  #introContainer.hidden { display:none; }
+
+  /* transition overlay fade */
+  .fade-away { transition: opacity 900ms cubic-bezier(.2,.9,.25,1); opacity:0; pointer-events:none; }
+
   /* ========== Topbar ========== */
   .topbar {
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:18px 28px;
-    max-width:1400px;
+    max-width:1200px;
     margin: 24px auto 0;
     position:relative;
     z-index:50;
@@ -49,812 +68,584 @@
   .navlinks {
     display:flex; gap:12px; align-items:center;
   }
-  .navlinks a, .navlinks button {
+  .navlinks a {
     color:var(--muted);
     text-decoration:none;
     padding:8px 12px;
-    border-radius:8px; 
-    font-weight:600;
-    background:none;
-    border:none;
-    cursor:pointer;
+    border-radius:8px; font-weight:600;
   }
-  .navlinks a:hover, .navlinks button:hover{ color:var(--accent); }
+  .navlinks a:hover{ color:var(--accent); }
 
-  /* ========== Main Layout ========== */
-  .dashboard {
-    max-width:1400px;
-    margin:0 auto;
-    padding:20px;
+  /* ========== Main content ========== */
+  main { max-width:1200px; margin: 36px auto; padding: 0 20px; position:relative; z-index:10; }
+
+  /* Hero */
+  .hero {
     display:grid;
-    grid-template-columns: 280px 1fr;
-    gap:24px;
-    min-height:calc(100vh - 120px);
+    grid-template-columns: 1fr 520px;
+    gap:28px;
+    align-items:center;
   }
-
-  /* ========== Filters Sidebar ========== */
-  .filters-sidebar {
+  .hero-card {
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:16px;
-    padding:20px;
+    border-radius:16px; padding:22px;
     border:1px solid rgba(255,255,255,0.03);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    height:fit-content;
-    position:sticky;
-    top:20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   }
-
-  .filter-section {
-    margin-bottom:24px;
+  .kicker { display:inline-block; padding:6px 12px; border-radius:999px; background: rgba(0,212,184,0.05); color:var(--accent); font-weight:700; }
+  .title {
+    font-weight:900; font-size: clamp(32px, 5vw, 56px); margin:8px 0; letter-spacing:-1px;
+    line-height:0.95;
+    color:linear-gradient;
   }
+  .subtitle { color:rgba(255,255,255,0.9); margin-top:10px; font-size:1.05rem; }
+  .cta-row { margin-top:18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
 
-  .filter-title {
-    color:var(--accent);
-    font-weight:700;
-    margin-bottom:12px;
-    font-size:0.95rem;
-    letter-spacing:0.3px;
-  }
-
-  .filter-group {
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
-
-  .filter-item {
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:6px 0;
-    cursor:pointer;
-  }
-
-  .filter-item input[type="checkbox"] {
-    width:16px;
-    height:16px;
-    accent-color:var(--accent);
-  }
-
-  .filter-item input[type="range"] {
-    flex:1;
-    accent-color:var(--accent);
-  }
-
-  .range-values {
-    display:flex;
-    justify-content:space-between;
-    font-size:0.85rem;
-    color:rgba(255,255,255,0.7);
-    margin-top:4px;
-  }
-
-  .clear-filters {
-    background:rgba(255,63,166,0.1);
-    color:var(--accent-2);
-    border:1px solid rgba(255,63,166,0.2);
-    padding:8px 16px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:600;
-    width:100%;
-    margin-top:16px;
-  }
-
-  .clear-filters:hover {
-    background:rgba(255,63,166,0.15);
-  }
-
-  /* ========== Main Content Area ========== */
-  .main-content {
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-  }
-
-  .search-header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:16px;
-  }
-
-  .search-bar {
-    flex:1;
-    background:rgba(255,255,255,0.02);
-    border:1px solid rgba(255,255,255,0.06);
-    padding:12px 16px;
-    border-radius:12px;
-    color:white;
-    font-size:1rem;
-  }
-
-  .search-bar::placeholder {
-    color:rgba(255,255,255,0.5);
-  }
-
-  .sort-dropdown {
-    background:rgba(255,255,255,0.02);
-    border:1px solid rgba(255,255,255,0.06);
-    padding:12px 16px;
-    border-radius:12px;
-    color:white;
-    cursor:pointer;
-  }
-
-  .results-count {
-    color:rgba(255,255,255,0.7);
-    font-size:0.9rem;
-    margin-bottom:8px;
-  }
-
-  /* ========== Influencer Grid ========== */
-  .influencers-grid {
-    display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap:20px;
-  }
-
-  .influencer-card {
+  .btn {
+    padding:12px 18px; border-radius:12px; cursor:pointer; font-weight:800;
+    border:1px solid rgba(255,255,255,0.04);
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:16px;
-    padding:20px;
-    border:1px solid rgba(255,255,255,0.03);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor:pointer;
-  }
-
-  .influencer-card:hover {
-    transform:translateY(-4px);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-  }
-
-  .influencer-header {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin-bottom:12px;
-  }
-
-  .avatar {
-    width:50px;
-    height:50px;
-    border-radius:50%;
-    background: linear-gradient(45deg, var(--accent), var(--accent-2));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:700;
-    color:white;
-  }
-
-  .influencer-info h3 {
-    margin:0;
-    color:white;
-    font-weight:700;
-    font-size:1.1rem;
-  }
-
-  .influencer-meta {
-    color:rgba(255,255,255,0.7);
-    font-size:0.85rem;
-    margin:2px 0;
-  }
-
-  .domain-tag {
-    display:inline-block;
-    background:rgba(0,212,184,0.1);
-    color:var(--accent);
-    padding:4px 8px;
-    border-radius:12px;
-    font-size:0.75rem;
-    font-weight:600;
-    margin-top:8px;
-  }
-
-  .bio {
-    color:rgba(255,255,255,0.8);
-    font-size:0.9rem;
-    line-height:1.4;
-    margin:12px 0;
-  }
-
-  .social-stats {
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:8px;
-    margin:12px 0;
-  }
-
-  .social-stat {
-    background:rgba(255,255,255,0.02);
-    padding:8px;
-    border-radius:8px;
-    text-align:center;
-  }
-
-  .social-stat .platform {
-    font-size:0.75rem;
-    color:rgba(255,255,255,0.6);
-    display:block;
-  }
-
-  .social-stat .count {
-    font-weight:700;
-    color:var(--accent);
-    font-size:0.9rem;
-  }
-
-  .pricing {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:16px;
-    padding-top:12px;
-    border-top:1px solid rgba(255,255,255,0.06);
-  }
-
-  .price-tag {
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    color:#001;
-    padding:6px 12px;
-    border-radius:8px;
-    font-weight:700;
-    font-size:0.9rem;
-  }
-
-  .contact-btn {
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.1);
     color:var(--muted);
-    padding:8px 16px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:600;
-    transition: background 0.2s ease;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn:hover{ transform:translateY(-6px); box-shadow: 0 18px 60px rgba(0,0,0,0.6); }
+  .btn-primary { background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#001; border:none; }
+
+  /* Right hero visual (placeholder for now) */
+  .visual {
+    border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,0.03);
+    height: 420px; display:flex; align-items:center; justify-content:center; position:relative;
+    box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+    background: linear-gradient(135deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
   }
 
-  .contact-btn:hover {
-    background:rgba(255,255,255,0.1);
+  .visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
   }
 
-  /* ========== Mobile Responsiveness ========== */
-  @media (max-width: 1024px) {
-    .dashboard {
-      grid-template-columns: 1fr;
-      gap:16px;
-    }
-    
-    .filters-sidebar {
-      position:static;
-      order:2;
-    }
-    
-    .main-content {
-      order:1;
-    }
-    
-    .influencers-grid {
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    }
+  /* Simple content sections */
+  .section { margin-top:34px; }
+  .grid3 { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; margin-top:14px; }
+  .feature {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px; padding:18px; border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 20px 40px rgba(0,0,0,0.5);
   }
+  .feature h3{ color:var(--accent); margin-bottom:6px; }
+  .feature p{ color:rgba(255,255,255,0.9); }
 
-  @media (max-width: 640px) {
-    .topbar {
-      padding:12px 16px;
-      flex-direction:column;
-      gap:12px;
-    }
-    
-    .navlinks {
-      flex-wrap:wrap;
-      justify-content:center;
-    }
-    
-    .search-header {
-      flex-direction:column;
-      align-items:stretch;
-    }
-    
-    .influencers-grid {
-      grid-template-columns: 1fr;
-    }
+  /* Testimonials */
+  .testimonials { display:flex; gap:12px; margin-top:12px; overflow:hidden; }
+  .tcard {
+    min-width:280px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   }
+  .tmeta { margin-top:10px; display:flex; gap:12px; align-items:center; }
+  .avatar { width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.04); }
 
-  /* Animation utilities */
-  .fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s ease forwards;
-  }
+  /* Contact */
+  .contact-grid { display:grid; grid-template-columns: 1fr 340px; gap:18px; margin-top:14px; }
+  input, textarea, select { width:100%; padding:10px; border-radius:8px; border:none; background: rgba(255,255,255,0.02); color:white; }
 
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  /* Footer */
+  footer { margin-top:32px; padding:22px 20px; color:rgba(255,255,255,0.85); text-align:center; border-top:1px solid rgba(255,255,255,0.02); }
 
-  /* Loading state */
-  .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    color: var(--accent);
-    font-weight: 600;
-  }
+  /* Responsiveness */
+  @media (max-width: 980px){ .hero { grid-template-columns: 1fr; } .visual { height:320px } .grid3{ grid-template-columns: repeat(2,1fr);} .contact-grid{ grid-template-columns:1fr;} }
+  @media (max-width:640px){ .grid3{ grid-template-columns:1fr } .topbar{ padding:12px } .hero-card{ padding:14px } }
 
-  .spinner {
-    width: 24px;
-    height: 24px;
-    border: 2px solid rgba(0,212,184,0.3);
-    border-top: 2px solid var(--accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-right: 8px;
-  }
+  /* little reveal */
+  .reveal { opacity:0; transform:translateY(12px); transition: all .6s cubic-bezier(.2,.9,.25,1); }
+  .reveal.visible { opacity:1; transform:none; }
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+  /* small loader text */
+  .intro-text { color: rgba(255,255,255,0.85); font-weight:700; letter-spacing:0.6px; font-size:0.95rem; margin-top:12px; }
 </style>
 </head>
 <body>
+
+<!-- Intro 3D canvas wrapper -->
+<div id="introContainer">
+  <canvas id="introCanvas"></canvas>
+  <!-- overlay text while intro plays -->
+  <div style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:10000">
+    <div style="text-align:center">
+      <div style="font-weight:900;color:var(--accent);font-size:28px;letter-spacing:1px">KreatorKart</div>
+      <div class="intro-text">Aesthetic | Fast | Trustworthy</div>
+    </div>
+  </div>
+</div>
+
+<!-- Main site content (hidden under intro until reveal) -->
+<div id="siteContent" style="opacity:0; transition:opacity 900ms cubic-bezier(.2,.9,.25,1);">
 
   <!-- Topbar -->
   <div class="topbar">
     <div class="logo">KreatorKart</div>
     <div class="navlinks">
-      <a href="index.html">Home</a>
-      <a href="#">Messages</a>
-      <button onclick="showToast('Profile settings opened!')">Profile</button>
-      <button onclick="showToast('Logged out successfully!')" style="color:var(--accent-2)">Logout</button>
+      <a href="#about">About Us</a>
     </div>
   </div>
 
-  <div class="dashboard">
-    <!-- Filters Sidebar -->
-    <div class="filters-sidebar">
-      <div class="filter-section">
-        <div class="filter-title">Age Range</div>
-        <input type="range" id="ageRange" min="18" max="50" value="35" oninput="updateAgeRange(this.value)">
-        <div class="range-values">
-          <span>18</span>
-          <span id="ageValue">18-35</span>
-          <span>50+</span>
+  <main>
+    <!-- HERO -->
+    <section class="hero reveal" id="hero">
+      <div class="hero-card">
+        <div class="kicker">Trusted • Transparent • Fast</div>
+        <div class="title">Creators meet Brands — in minutes</div>
+        <div class="subtitle">Discover trusted influencers, see real metrics, and manage every collaboration in one seamless platform</div>
+
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="openModal('influencer')">I am an influencer</button>
+          <button class="btn" onclick="openModal('organization')">I'm a brand</button>
         </div>
       </div>
 
-      <div class="filter-section">
-        <div class="filter-title">Domain</div>
-        <div class="filter-group" id="domainFilters">
-          <div class="filter-item">
-            <input type="checkbox" id="fashion" value="Fashion" onchange="applyFilters()">
-            <label for="fashion">Fashion</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="food" value="Food" onchange="applyFilters()">
-            <label for="food">Food & Culinary</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="fitness" value="Fitness" onchange="applyFilters()">
-            <label for="fitness">Fitness</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="tech" value="Tech" onchange="applyFilters()">
-            <label for="tech">Technology</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="beauty" value="Beauty" onchange="applyFilters()">
-            <label for="beauty">Beauty</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="travel" value="Travel" onchange="applyFilters()">
-            <label for="travel">Travel</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="lifestyle" value="Lifestyle" onchange="applyFilters()">
-            <label for="lifestyle">Lifestyle</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="finance" value="Finance" onchange="applyFilters()">
-            <label for="finance">Finance</label>
-          </div>
+      <div class="visual reveal">
+        <!-- User's image from their computer -->
+        <img src="file:///C:/Users/HP/OneDrive/Desktop/home.jpg" alt="KreatorKart Platform" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <!-- Fallback content if image doesn't load -->
+        <div style="text-align:center;color:rgba(255,255,255,0.9);padding:18px;display:none;">
+          <svg width="220" height="220" viewBox="0 0 200 200" fill="none" aria-hidden>
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0" stop-color="#00d4b8"/>
+                <stop offset="1" stop-color="#ff3fa6"/>
+              </linearGradient>
+            </defs>
+            <rect x="12" y="12" width="176" height="176" rx="22" fill="url(#g1)" opacity="0.12"></rect>
+            <g transform="translate(20,28)">
+              <!-- stylized cart icon -->
+              <rect x="10" y="44" width="140" height="52" rx="6" fill="#001f2a" opacity="0.6"></rect>
+              <rect x="14" y="18" width="110" height="36" rx="6" fill="#001f2a" opacity="0.5"></rect>
+              <circle cx="44" cy="110" r="10" fill="#001f2a" opacity="0.8"></circle>
+              <circle cx="120" cy="110" r="10" fill="#001f2a" opacity="0.8"></circle>
+            </g>
+          </svg>
+          <div style="margin-top:12px; font-weight:700">Cinematic Intro • Smooth UX</div>
         </div>
       </div>
+    </section>
 
-      <div class="filter-section">
-        <div class="filter-title">Price Range (per video)</div>
-        <input type="range" id="priceRange" min="50" max="5000" value="2500" oninput="updatePriceRange(this.value)">
-        <div class="range-values">
-          <span>$50</span>
-          <span id="priceValue">$50-2500</span>
-          <span>$5000+</span>
+    <!-- FEATURES -->
+    <section id="features" class="section reveal">
+      <h2 style="color:var(--accent); margin:0">Highlights</h2>
+      <p style="color:rgba(255,255,255,0.86)">Designed for creators and startups — fast onboarding, verified insights, and transparent fees.</p>
+
+      <div class="grid3">
+        <div class="feature"><h3>Creator Onboarding</h3><p>Step-by-step profile creation with portfolio uploads and verification badges.</p></div>
+        <div class="feature"><h3>Smart Matching</h3><p>Filter by niche, audience, language and price for precise campaign fits.</p></div>
+        <div class="feature"><h3>Transparent Pricing</h3><p>Clear rates for reels, posts, stories, with negotiable options.</p></div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="section reveal">
+      <h2 style="color:var(--accent); margin:0">Testimonials</h2>
+      <p style="color:rgba(255,255,255,0.85)">Early adopters loved the speed and clarity.</p>
+
+      <div class="testimonials" id="testWrap">
+        <div class="tcard"><p>"We found the right creators in 48 hours, results within a week."</p>
+          <div class="tmeta"><img class="avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Riya"><div><strong>Riya Sharma</strong><div class="tiny">Founder, Little Sip Co.</div></div></div>
+        </div>
+        <div class="tcard"><p>"Onboarding is smooth and pricing is transparent."</p>
+          <div class="tmeta"><img class="avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Arjun"><div><strong>Arjun Mehta</strong><div class="tiny">Food Creator</div></div></div>
+        </div>
+        <div class="tcard"><p>"Verification badges helped us book confidently."</p>
+          <div class="tmeta"><img class="avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Neha"><div><strong>Neha Verma</strong><div class="tiny">Growth Lead</div></div></div>
         </div>
       </div>
+    </section>
 
-      <div class="filter-section">
-        <div class="filter-title">Instagram Followers</div>
-        <div class="filter-group">
-          <div class="filter-item">
-            <input type="checkbox" id="micro" value="1000-10000" onchange="applyFilters()">
-            <label for="micro">1K - 10K</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="mid" value="10000-100000" onchange="applyFilters()">
-            <label for="mid">10K - 100K</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="macro" value="100000-1000000" onchange="applyFilters()">
-            <label for="macro">100K - 1M</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="mega" value="1000000+" onchange="applyFilters()">
-            <label for="mega">1M+</label>
-          </div>
+    <!-- CONTACT -->
+    <section id="contact" class="section reveal">
+      <h2 style="color:var(--accent); margin:0">Contact</h2>
+      <p style="color:rgba(255,255,255,0.85)">Reach out for partnerships, demos or support.</p>
+
+      <div class="contact-grid">
+        <form id="contactForm" onsubmit="event.preventDefault(); submitContact();">
+          <input id="cname" placeholder="Your name" required />
+          <input id="cemail" placeholder="Email" type="email" required />
+          <select id="ctype"><option>General</option><option>Partnership</option><option>Support</option></select>
+          <textarea id="cmessage" placeholder="Message" required></textarea>
+          <button class="btn btn-primary" type="submit">Send Message</button>
+        </form>
+
+        <div style="padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0)); border:1px solid rgba(255,255,255,0.02);">
+          <h3 style="color:var(--accent); margin-top:0">Get in touch</h3>
+          <p class="tiny">support@kreatorkart.com<br>+91 99999 99999</p>
+          <p style="margin-top:12px">Office: IIM Rohtak Campus (Group 05)</p>
         </div>
       </div>
+    </section>
 
-      <div class="filter-section">
-        <div class="filter-title">Location</div>
-        <div class="filter-group" id="locationFilters">
-          <div class="filter-item">
-            <input type="checkbox" id="mumbai" value="Mumbai" onchange="applyFilters()">
-            <label for="mumbai">Mumbai</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="delhi" value="Delhi" onchange="applyFilters()">
-            <label for="delhi">Delhi</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="bangalore" value="Bangalore" onchange="applyFilters()">
-            <label for="bangalore">Bangalore</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="pune" value="Pune" onchange="applyFilters()">
-            <label for="pune">Pune</label>
-          </div>
-          <div class="filter-item">
-            <input type="checkbox" id="hyderabad" value="Hyderabad" onchange="applyFilters()">
-            <label for="hyderabad">Hyderabad</label>
-          </div>
-        </div>
+    <footer>
+      <div style="max-width:1100px;margin:0 auto;padding:0 20px">
+        &copy; 2025 KreatorKart • Group 05, IIM Rohtak • <a href="#contact" style="color:var(--accent);text-decoration:none">Contact</a>
       </div>
+    </footer>
+  </main>
+</div>
 
-      <button class="clear-filters" onclick="clearAllFilters()">Clear All Filters</button>
+<!-- Modal forms preserved -->
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:11000;align-items:center;justify-content:center;">
+  <div style="width:92%;max-width:560px;background:linear-gradient(180deg,#071226,#0b2540);padding:18px;border-radius:12px;position:relative;border:1px solid rgba(255,255,255,0.03)">
+    <button onclick="closeModal()" style="position:absolute;right:12px;top:12px;background:none;border:none;color:white;font-size:20px;cursor:pointer">✖</button>
+    <h2 id="modalTitle" style="color:var(--accent);margin-top:0">Sign Up / Log In</h2>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button id="signupTab" onclick="switchTab('signup')" style="flex:1;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);color:white;font-weight:700">Sign Up</button>
+      <button id="loginTab" onclick="switchTab('login')" style="flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:white;font-weight:700">Log In</button>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-      <div class="search-header">
-        <input type="text" class="search-bar" placeholder="Search influencers by name, domain, or location..." oninput="searchInfluencers(this.value)">
-        <select class="sort-dropdown" onchange="sortInfluencers(this.value)">
-          <option value="relevance">Sort by Relevance</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="followers-high">Followers: High to Low</option>
-          <option value="followers-low">Followers: Low to High</option>
-          <option value="name">Name A-Z</option>
-        </select>
-      </div>
+    <form id="signupForm" onsubmit="event.preventDefault(); handleSignup()" style="display:block">
+      <div id="signupFields"></div>
+      <button class="btn btn-primary" type="submit">Sign Up</button>
+    </form>
 
-      <div class="results-count" id="resultsCount"></div>
-
-      <div class="influencers-grid" id="influencersGrid">
+    <form id="loginForm" onsubmit="event.preventDefault(); handleLogin()" style="display:none;margin-top:8px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input placeholder="Email or Username" required />
+        <input placeholder="Password" type="password" required />
+        <button class="btn btn-primary" type="submit">Log In</button>
       </div>
-    </div>
+    </form>
   </div>
+</div>
 
 <script>
-// Sample influencer data
-const influencersData = [
-  { name: "Priya Sharma", age: 24, bio: "Fashion enthusiast sharing daily outfit inspiration and sustainable fashion tips.", location: "Mumbai", domain: "Fashion", instagram: 45000, linkedin: 8500, price: 800, avatar: "PS" },
-  { name: "Arjun Mehta", age: 28, bio: "Food blogger exploring street food and fine dining across India.", location: "Delhi", domain: "Food", instagram: 67000, linkedin: 12000, price: 1200, avatar: "AM" },
-  { name: "Sneha Patel", age: 26, bio: "Fitness coach helping people achieve their health goals through simple workouts.", location: "Pune", domain: "Fitness", instagram: 35000, linkedin: 5200, price: 600, avatar: "SP" },
-  { name: "Rohit Kumar", age: 30, bio: "Tech reviewer covering latest gadgets, apps, and digital trends.", location: "Bangalore", domain: "Tech", instagram: 89000, linkedin: 25000, price: 1500, avatar: "RK" },
-  { name: "Ananya Singh", age: 23, bio: "Beauty and skincare expert sharing tips for glowing skin.", location: "Mumbai", domain: "Beauty", instagram: 92000, linkedin: 6800, price: 1800, avatar: "AS" },
-  { name: "Vikram Rao", age: 32, bio: "Travel photographer capturing the beauty of India's hidden gems.", location: "Hyderabad", domain: "Travel", instagram: 78000, linkedin: 9500, price: 1400, avatar: "VR" },
-  { name: "Kavya Nair", age: 25, bio: "Lifestyle blogger sharing home decor, productivity, and wellness tips.", location: "Bangalore", domain: "Lifestyle", instagram: 54000, linkedin: 7200, price: 950, avatar: "KN" },
-  { name: "Aditya Gupta", age: 29, bio: "Finance expert making investment and money management simple for millennials.", location: "Delhi", domain: "Finance", instagram: 41000, linkedin: 18000, price: 1100, avatar: "AG" },
-  { name: "Riya Kapoor", age: 27, bio: "Fashion stylist helping people discover their personal style.", location: "Mumbai", domain: "Fashion", instagram: 63000, linkedin: 4500, price: 1300, avatar: "RK" },
-  { name: "Manish Shah", age: 31, bio: "Chef sharing authentic regional recipes and cooking techniques.", location: "Pune", domain: "Food", instagram: 72000, linkedin: 8900, price: 1250, avatar: "MS" },
-  { name: "Pooja Jain", age: 24, bio: "Yoga instructor promoting mental wellness through mindful practices.", location: "Bangalore", domain: "Fitness", instagram: 38000, linkedin: 6100, price: 650, avatar: "PJ" },
-  { name: "Sahil Verma", age: 26, bio: "Gaming content creator and tech enthusiast.", location: "Delhi", domain: "Tech", instagram: 95000, linkedin: 15000, price: 1600, avatar: "SV" },
-  { name: "Meera Reddy", age: 28, bio: "Makeup artist and beauty influencer with expertise in bridal looks.", location: "Hyderabad", domain: "Beauty", instagram: 87000, linkedin: 5500, price: 1700, avatar: "MR" },
-  { name: "Karan Malhotra", age: 33, bio: "Adventure travel enthusiast exploring offbeat destinations.", location: "Mumbai", domain: "Travel", instagram: 104000, linkedin: 11000, price: 2200, avatar: "KM" },
-  { name: "Ishita Agarwal", age: 25, bio: "Home organization expert and minimalist lifestyle advocate.", location: "Pune", domain: "Lifestyle", instagram: 49000, linkedin: 6800, price: 850, avatar: "IA" },
-  { name: "Nikhil Joshi", age: 30, bio: "Stock market analyst and crypto educator.", location: "Bangalore", domain: "Finance", instagram: 56000, linkedin: 22000, price: 1350, avatar: "NJ" },
-  { name: "Tanya Khanna", age: 22, bio: "Gen-Z fashion creator focusing on affordable and trendy outfits.", location: "Delhi", domain: "Fashion", instagram: 71000, linkedin: 3200, price: 1450, avatar: "TK" },
-  { name: "Ajay Krishnan", age: 29, bio: "South Indian cuisine specialist and restaurant reviewer.", location: "Hyderabad", domain: "Food", instagram: 58000, linkedin: 7400, price: 1050, avatar: "AK" },
-  { name: "Sanya Kapoor", age: 26, bio: "Pilates instructor and women's health advocate.", location: "Mumbai", domain: "Fitness", instagram: 44000, linkedin: 8800, price: 750, avatar: "SK" },
-  { name: "Dev Patel", age: 27, bio: "AI and machine learning educator making complex topics accessible.", location: "Bangalore", domain: "Tech", instagram: 62000, linkedin: 28000, price: 1550, avatar: "DP" },
-  { name: "Neha Agarwal", age: 24, bio: "Skincare routine specialist focusing on Indian skin types.", location: "Pune", domain: "Beauty", instagram: 83000, linkedin: 4900, price: 1650, avatar: "NA" },
-  { name: "Rohan Gupta", age: 31, bio: "Solo travel blogger and budget travel expert.", location: "Delhi", domain: "Travel", instagram: 91000, linkedin: 12500, price: 1900, avatar: "RG" },
-  { name: "Aditi Sharma", age: 28, bio: "Interior designer sharing budget-friendly home makeover ideas.", location: "Mumbai", domain: "Lifestyle", instagram: 67000, linkedin: 9200, price: 1250, avatar: "AS" },
-  { name: "Harsh Mittal", age: 32, bio: "Personal finance coach and investment strategy expert.", location: "Hyderabad", domain: "Finance", instagram: 48000, linkedin: 19500, price: 1200, avatar: "HM" },
-  { name: "Simran Kaur", age: 23, bio: "Sustainable fashion advocate promoting eco-friendly brands.", location: "Bangalore", domain: "Fashion", instagram: 39000, linkedin: 5700, price: 700, avatar: "SK" },
-  { name: "Raghav Sinha", age: 30, bio: "Street food explorer and regional cuisine documenter.", location: "Pune", domain: "Food", instagram: 75000, linkedin: 6300, price: 1400, avatar: "RS" },
-  { name: "Kritika Jain", age: 25, bio: "HIIT workout specialist and nutrition coach.", location: "Delhi", domain: "Fitness", instagram: 52000, linkedin: 7800, price: 900, avatar: "KJ" },
-  { name: "Aryan Das", age: 28, bio: "Cybersecurity expert and ethical hacking educator.", location: "Mumbai", domain: "Tech", instagram: 46000, linkedin: 21000, price: 1300, avatar: "AD" },
-  { name: "Rhea Malhotra", age: 26, bio: "Clean beauty enthusiast and organic skincare advocate.", location: "Bangalore", domain: "Beauty", instagram: 79000, linkedin: 8100, price: 1500, avatar: "RM" },
-  { name: "Yash Thakur", age: 29, bio: "Mountain trekking guide and nature photography expert.", location: "Hyderabad", domain: "Travel", instagram: 86000, linkedin: 10200, price: 1750, avatar: "YT" }
-];
+/* ============================
+   3D Intro (procedural "AI" cart)
+   ============================ */
 
-let filteredInfluencers = [...influencersData];
-let currentSort = 'relevance';
+const introCanvas = document.getElementById('introCanvas');
+const introContainer = document.getElementById('introContainer');
+const siteContent = document.getElementById('siteContent');
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    // Display influencers immediately by calling the filter function
-    applyFilters();
-});
+let renderer;
+try {
+  // Scene / camera / renderer
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x061222);
 
-// Display influencers in grid
-function displayInfluencers(influencers) {
-  const grid = document.getElementById('influencersGrid');
-  
-  if (influencers.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.6);">
-        <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
-        <h3 style="margin: 0 0 8px 0; color: var(--muted);">No influencers found</h3>
-        <p>Try adjusting your filters or search terms</p>
-      </div>
-    `;
-    return;
+  renderer = new THREE.WebGLRenderer({ canvas: introCanvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio || 1);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const camera = new THREE.PerspectiveCamera(35, innerWidth/innerHeight, 0.1, 2000);
+  camera.position.set(0, 6, 18);
+
+  function onResize(){
+    const dpr = window.devicePixelRatio || 1;
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', onResize);
+  onResize();
+
+  // Lights
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.4);
+  scene.add(hemi);
+
+  const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+  dir.position.set(5, 20, 10);
+  dir.castShadow = true;
+  dir.shadow.mapSize.set(2048,2048);
+  dir.shadow.camera.left = -30; dir.shadow.camera.right = 30; dir.shadow.camera.top = 30; dir.shadow.camera.bottom = -10;
+  scene.add(dir);
+
+  // soft fill colored lights to give "AI" neon accents
+  const tealLight = new THREE.PointLight(0x00d4b8, 0.8, 40);
+  tealLight.position.set(-6, 4, 10);
+  scene.add(tealLight);
+  const pinkLight = new THREE.PointLight(0xff3fa6, 0.6, 40);
+  pinkLight.position.set(6, 2, -6);
+  scene.add(pinkLight);
+
+  // ground plane to receive shadow (invisible but receives)
+  const groundMat = new THREE.ShadowMaterial({ opacity: 0.22 });
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(200,200), groundMat);
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -2.8;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  /* Build a stylized cart from primitives */
+  function makeCart(){
+    const group = new THREE.Group();
+
+    // base platform
+    const baseGeo = new THREE.BoxGeometry(6.5, 0.45, 3.8);
+    const baseMat = new THREE.MeshStandardMaterial({ color:0x0b1b2a, metalness:0.25, roughness:0.35, emissive:0x00121b, emissiveIntensity:0.02 });
+    const base = new THREE.Mesh(baseGeo, baseMat);
+    base.position.set(0, -0.8, 0);
+    base.castShadow = true; base.receiveShadow = true;
+    group.add(base);
+
+    // basket (rounded)
+    const basketGeo = new THREE.BoxGeometry(5.8, 2.6, 3.2);
+    const basket = new THREE.Mesh(basketGeo, new THREE.MeshStandardMaterial({ color:0x0e2b3a, metalness:0.16, roughness:0.35 }));
+    basket.position.set(0, 0.6, 0);
+    basket.castShadow = true; basket.receiveShadow = true;
+    group.add(basket);
+
+    // top rim (accent)
+    const rimGeo = new THREE.TorusGeometry(2.9, 0.12, 16, 64);
+    const rimMat = new THREE.MeshStandardMaterial({ color:0x00d4b8, metalness:0.8, roughness:0.18, emissive:0x003f35, emissiveIntensity:0.08 });
+    const rim = new THREE.Mesh(rimGeo, rimMat);
+    rim.rotation.x = Math.PI / 2;
+    rim.position.set(0, 1.9, 0);
+    group.add(rim);
+
+    // handle column and bar
+    const handleMat = new THREE.MeshStandardMaterial({ color:0x1b2f3a, metalness:0.85, roughness:0.2 });
+    const cyl1 = new THREE.CylinderGeometry(0.12,0.12,2.5, 12);
+    const h1 = new THREE.Mesh(cyl1, handleMat); h1.position.set(-2.2, 1.6, -1.05); h1.rotation.z = Math.PI / 6;
+    const h2 = h1.clone(); h2.position.set(-2.2, 1.6, 1.05); h2.rotation.z = Math.PI / 6;
+    group.add(h1); group.add(h2);
+
+    // handle top bar
+    const barGeo = new THREE.CylinderGeometry(0.1,0.1,2.0,12);
+    const bar = new THREE.Mesh(barGeo, handleMat); bar.rotation.z = Math.PI/2; bar.position.set(-3.1, 2.05, 0);
+    group.add(bar);
+
+    // wheels - torus + inner hub
+    for(let i=-1;i<=1;i+=2){
+      const tor = new THREE.TorusGeometry(0.62, 0.14, 16, 64);
+      const torMat = new THREE.MeshStandardMaterial({ color:0x08121a, roughness:0.35, metalness:0.5 });
+      const wheel = new THREE.Mesh(tor, torMat);
+      wheel.rotation.x = Math.PI / 2;
+      wheel.position.set(i*2.2, -1.4, 1.6);
+      wheel.castShadow = true;
+      // hub
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.3,16), new THREE.MeshStandardMaterial({ color:0x00d4b8, emissive:0x003f35, emissiveIntensity:0.08 }));
+      hub.rotation.x = Math.PI / 2;
+      hub.position.copy(wheel.position);
+      group.add(wheel); group.add(hub);
+      // back wheels pair
+      const wheel2 = wheel.clone(); wheel2.position.z = -1.6; group.add(wheel2);
+      const hub2 = hub.clone(); hub2.position.z = -1.6; group.add(hub2);
+    }
+
+    // small accent plate front
+    const plate = new THREE.Mesh(new THREE.BoxGeometry(1.6,0.12,0.6), new THREE.MeshStandardMaterial({ color:0xff3fa6, emissive:0x2a001e, emissiveIntensity:0.06 }));
+    plate.position.set(3.0, 0.1, 0);
+    plate.rotation.z = -0.06;
+    group.add(plate);
+
+    // slight tilt for style
+    group.rotation.set(0.03, -0.6, 0.03);
+    group.scale.set(1.2,1.2,1.2);
+
+    group.traverse((m) => { if(m.isMesh){ m.castShadow = true; m.receiveShadow = true; }});
+    return group;
   }
 
-  grid.innerHTML = influencers.map((influencer, index) => `
-    <div class="influencer-card fade-in" style="animation-delay: ${index * 0.1}s" onclick="contactInfluencer('${influencer.name}')">
-      <div class="influencer-header">
-        <div class="avatar">${influencer.avatar}</div>
-        <div class="influencer-info">
-          <h3>${influencer.name}</h3>
-          <div class="influencer-meta">${influencer.age} years • ${influencer.location}</div>
-        </div>
-      </div>
-      
-      <div class="domain-tag">${influencer.domain}</div>
-      
-      <div class="bio">${influencer.bio}</div>
-      
-      <div class="social-stats">
-        <div class="social-stat">
-          <span class="platform">Instagram</span>
-          <span class="count">${formatNumber(influencer.instagram)}</span>
-        </div>
-        <div class="social-stat">
-          <span class="platform">LinkedIn</span>
-          <span class="count">${formatNumber(influencer.linkedin)}</span>
-        </div>
-      </div>
-      
-      <div class="pricing">
-        <div class="price-tag">$${influencer.price}/video</div>
-        <button class="contact-btn" onclick="event.stopPropagation(); contactInfluencer('${influencer.name}')">Contact</button>
-      </div>
-    </div>
-  `).join('');
-}
+  const cart = makeCart();
+  scene.add(cart);
 
-// Format numbers for display
-function formatNumber(num) {
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M';
-  } else if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'K';
-  }
-  return num.toString();
-}
+  // decorative subtle backdrop panels for premium look
+  const panelGeo = new THREE.BoxGeometry(24, 6, 1);
+  const panelMat = new THREE.MeshStandardMaterial({ color:0x06182a, metalness:0.0, roughness:0.9, opacity:0.65, transparent:true });
+  const backPanel = new THREE.Mesh(panelGeo, panelMat);
+  backPanel.position.set(0, -1.2, -10);
+  backPanel.rotation.x = 0.05;
+  scene.add(backPanel);
 
-// Update results count
-function updateResultsCount() {
-  document.getElementById('resultsCount').textContent = 
-    `${filteredInfluencers.length} influencer${filteredInfluencers.length !== 1 ? 's' : ''} found`;
-}
+  // camera path curve for cinematic travel
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-26, 2.8, 12),
+    new THREE.Vector3(-12, 3.2, 8),
+    new THREE.Vector3(-2, 2.0, 6),
+    new THREE.Vector3(6, 1.6, 3.5),
+    new THREE.Vector3(14, 1.2, 1.5),
+    new THREE.Vector3(28, 1.0, 0.6)
+  ]);
 
-// Search functionality
-function searchInfluencers(query) {
-  const searchTerm = query.toLowerCase();
-  filteredInfluencers = influencersData.filter(influencer => {
-    return influencer.name.toLowerCase().includes(searchTerm) ||
-           influencer.domain.toLowerCase().includes(searchTerm) ||
-           influencer.location.toLowerCase().includes(searchTerm) ||
-           influencer.bio.toLowerCase().includes(searchTerm);
-  });
-  
-  applyActiveFilters();
-}
+  // Animate: cart rolls along a path
+  let startTime = null;
+  const introDuration = 4300; // ms for cinematic pass
 
-// Apply all active filters
-function applyFilters() {
-  let filtered = [...influencersData];
-  
-  // Apply search if exists
-  const searchInput = document.querySelector('.search-bar');
-  if (searchInput && searchInput.value) {
-    const searchTerm = searchInput.value.toLowerCase();
-    filtered = filtered.filter(influencer => {
-      return influencer.name.toLowerCase().includes(searchTerm) ||
-             influencer.domain.toLowerCase().includes(searchTerm) ||
-             influencer.location.toLowerCase().includes(searchTerm) ||
-             influencer.bio.toLowerCase().includes(searchTerm);
+  function animateIntro(t){
+    if(!startTime) startTime = t;
+    const elapsed = t - startTime;
+    const progress = Math.min(1, elapsed / introDuration);
+
+    // position along curve
+    const pos = curve.getPoint(progress*0.95); // stop a bit earlier
+    cart.position.copy(pos);
+
+    // slight bobbing
+    cart.position.y += Math.sin(progress * Math.PI * 2) * 0.08;
+
+    // rotate slowly for "rolling" feel
+    cart.rotation.y = -Math.atan2(pos.z, pos.x) + (Math.sin(progress*6)*0.06);
+
+    // rotate wheels
+    cart.traverse((m) => {
+      if(m.geometry && m.geometry.type === 'TorusGeometry'){
+        m.rotation.y += 0.08 + progress*0.04;
+      }
     });
-  }
-  
-  // Age filter
-  const ageRange = document.getElementById('ageRange').value;
-  filtered = filtered.filter(influencer => influencer.age <= ageRange);
-  
-  // Domain filters
-  const domainCheckboxes = document.querySelectorAll('#domainFilters input[type="checkbox"]:checked');
-  if (domainCheckboxes.length > 0) {
-    const selectedDomains = Array.from(domainCheckboxes).map(cb => cb.value);
-    filtered = filtered.filter(influencer => selectedDomains.includes(influencer.domain));
-  }
-  
-  // Price filter
-  const priceRange = document.getElementById('priceRange').value;
-  filtered = filtered.filter(influencer => influencer.price <= priceRange);
-  
-  // Follower filters
-  const followerCheckboxes = document.querySelectorAll('#micro, #mid, #macro, #mega');
-  const checkedFollowerFilters = Array.from(followerCheckboxes).filter(cb => cb.checked);
-  if (checkedFollowerFilters.length > 0) {
-    filtered = filtered.filter(influencer => {
-      const followers = influencer.instagram;
-      return checkedFollowerFilters.some(cb => {
-        const range = cb.value;
-        if (range === '1000-10000') return followers >= 1000 && followers <= 10000;
-        if (range === '10000-100000') return followers >= 10000 && followers <= 100000;
-        if (range === '100000-1000000') return followers >= 100000 && followers <= 1000000;
-        if (range === '1000000+') return followers >= 1000000;
-        return false;
-      });
-    });
-  }
-  
-  // Location filters
-  const locationCheckboxes = document.querySelectorAll('#locationFilters input[type="checkbox"]:checked');
-  if (locationCheckboxes.length > 0) {
-    const selectedLocations = Array.from(locationCheckboxes).map(cb => cb.value);
-    filtered = filtered.filter(influencer => selectedLocations.includes(influencer.location));
-  }
-  
-  filteredInfluencers = filtered;
-  
-  // Apply current sort
-  if (currentSort !== 'relevance') {
-    sortInfluencers(currentSort, false);
-  }
-  
-  displayInfluencers(filteredInfluencers);
-  updateResultsCount();
-}
 
-// Apply active filters (used by search function)
-function applyActiveFilters() {
-  applyFilters();
-}
+    // camera follows slightly behind
+    const camTarget = curve.getPoint(Math.max(0, progress*0.95 - 0.03));
+    camera.position.lerp(new THREE.Vector3(camTarget.x+8, camTarget.y+4.0, camTarget.z+10), 0.08);
+    camera.lookAt(cart.position.x, cart.position.y + 0.8, cart.position.z);
 
-// Sort functionality
-function sortInfluencers(sortBy, updateDisplay = true) {
-  currentSort = sortBy;
-  
-  switch(sortBy) {
-    case 'price-low':
-      filteredInfluencers.sort((a, b) => a.price - b.price);
-      break;
-    case 'price-high':
-      filteredInfluencers.sort((a, b) => b.price - a.price);
-      break;
-    case 'followers-high':
-      filteredInfluencers.sort((a, b) => b.instagram - a.instagram);
-      break;
-    case 'followers-low':
-      filteredInfluencers.sort((a, b) => a.instagram - b.instagram);
-      break;
-    case 'name':
-      filteredInfluencers.sort((a, b) => a.name.localeCompare(b.name));
-      break;
-    default: // relevance
-      // For relevance, we don't change the order but apply filters
-      applyFilters();
-      return;
-  }
-  
-  if (updateDisplay) {
-    displayInfluencers(filteredInfluencers);
-    updateResultsCount();
-  }
-}
+    renderer.render(scene, camera);
 
-// Update age range display
-function updateAgeRange(value) {
-  document.getElementById('ageValue').textContent = `18-${value}`;
-  applyFilters();
-}
-
-// Update price range display
-function updatePriceRange(value) {
-  document.getElementById('priceValue').textContent = `$50-${value}`;
-  applyFilters();
-}
-
-// Clear all filters
-function clearAllFilters() {
-  // Reset range inputs
-  document.getElementById('ageRange').value = 50;
-  document.getElementById('priceRange').value = 5000;
-  document.getElementById('ageValue').textContent = '18-50';
-  document.getElementById('priceValue').textContent = '$50-5000';
-  
-  // Uncheck all checkboxes
-  document.querySelectorAll('.filter-item input[type="checkbox"]').forEach(cb => cb.checked = false);
-  
-  // Clear search
-  document.querySelector('.search-bar').value = '';
-  
-  // Reset sort
-  document.querySelector('.sort-dropdown').value = 'relevance';
-  currentSort = 'relevance';
-  
-  // Reset data and apply default filters
-  filteredInfluencers = [...influencersData];
-  applyFilters(); // This will handle the initial display with no filters
-  
-  showToast('All filters cleared!');
-}
-
-// Contact influencer
-function contactInfluencer(name) {
-  showToast(`Contacting ${name}... (Demo functionality)`);
-}
-
-// Toast notification
-function showToast(msg) {
-  const toast = document.createElement('div');
-  toast.textContent = msg;
-  Object.assign(toast.style, {
-    position: 'fixed',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    bottom: '26px',
-    background: 'rgba(0,0,0,0.8)',
-    color: 'white',
-    padding: '12px 18px',
-    borderRadius: '8px',
-    zIndex: 12000,
-    transition: 'opacity 300ms',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-    border: '1px solid rgba(255,255,255,0.1)'
-  });
-  document.body.appendChild(toast);
-  
-  setTimeout(() => toast.style.opacity = '0', 2500);
-  setTimeout(() => toast.remove(), 3000);
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-  if (e.ctrlKey || e.metaKey) {
-    switch(e.key) {
-      case 'k':
-        e.preventDefault();
-        document.querySelector('.search-bar').focus();
-        break;
-      case 'r':
-        e.preventDefault();
-        clearAllFilters();
-        break;
+    if(progress < 1){
+      requestAnimationFrame(animateIntro);
+    } else {
+      // finish animation: do a small settle and fade to site
+      requestAnimationFrame(fadeOutIntro);
     }
   }
-});
-</script>
 
+  // fade out and reveal site
+  function fadeOutIntro(){
+    // small settle frames
+    let frames = 0;
+    function settle(){
+      frames++;
+      cart.rotation.x *= 0.98;
+      cart.rotation.z *= 0.98;
+      renderer.render(scene, camera);
+      if(frames < 8) requestAnimationFrame(settle);
+      else {
+        // fade overlay
+        introContainer.style.transition = 'opacity 900ms cubic-bezier(.2,.9,.25,1)';
+        introContainer.style.opacity = '0';
+        setTimeout(()=> {
+          introContainer.classList.add('hidden');
+          siteContent.style.opacity = '1';
+          // reveal page elements
+          document.querySelectorAll('.reveal').forEach((el, i) => setTimeout(()=> el.classList.add('visible'), i * 120));
+          // try to release GL resources (best-effort)
+          try {
+            if(renderer && renderer.getContext) {
+              const gl = renderer.getContext();
+              if (gl && gl.getExtension) {
+                // best-effort context loss
+                const ext = gl.getExtension('WEBGL_lose_context');
+                if (ext) ext.loseContext();
+              }
+            }
+          } catch(e){ /* ignore cleanup errors */ }
+        }, 920);
+      }
+    }
+    settle();
+  }
+
+  // Start the intro
+  requestAnimationFrame(animateIntro);
+
+  // If WebGL helper exists and WebGL is not available, skip intro
+  if(!(THREE.WEBGL && THREE.WEBGL.isWebGLAvailable && THREE.WEBGL.isWebGLAvailable())){
+    console.warn('WebGL unavailable — skipping intro.');
+    introContainer.classList.add('hidden');
+    siteContent.style.opacity = '1';
+    document.querySelectorAll('.reveal').forEach((el, i) => setTimeout(()=> el.classList.add('visible'), i * 120));
+  }
+
+} catch(err){
+  console.error('Intro initialization failed — skipping intro.', err);
+  // fallback: reveal site content
+  introContainer.classList.add('hidden');
+  siteContent.style.opacity = '1';
+  document.querySelectorAll('.reveal').forEach((el, i) => setTimeout(()=> el.classList.add('visible'), i * 120));
+}
+
+/* ============================
+   Preserve modal & forms (user/brand flows)
+   ============================ */
+const modal = document.getElementById('modal');
+const signupFields = document.getElementById('signupFields');
+let currentType = 'influencer';
+function openModal(type){
+  currentType = type;
+  modal.style.display = 'flex';
+  document.getElementById('modalTitle').textContent = type === 'influencer' ? 'Influencer Portal' : 'Organization Portal';
+  loadSignup(type);
+}
+function closeModal(){ modal.style.display = 'none'; }
+function switchTab(tab){
+  document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+}
+function loadSignup(type){
+  if(type === 'influencer'){
+    signupFields.innerHTML = `
+      <input placeholder="Full Name" required />
+      <input placeholder="Age" type="number" />
+      <input placeholder="Email" type="email" required />
+      <input placeholder="Phone Number" />
+      <input placeholder="Username" />
+      <input placeholder="Password" type="password" />
+      <input placeholder="Instagram Handle" />
+      <input placeholder="Followers Count" type="number" />
+      <input placeholder="Category / Niche" />
+      <input placeholder="Rate for Story ($)" type="number" />
+      <input placeholder="Rate for Reel ($)" type="number" />
+    `;
+  } else {
+    signupFields.innerHTML = `
+      <input placeholder="Brand Name" required />
+      <input placeholder="Email" type="email" required />
+      <input placeholder="Phone Number" />
+      <input placeholder="Username" />
+      <input placeholder="Password" type="password" />
+      <input placeholder="Industry" />
+      <input placeholder="Website" type="url" />
+      <textarea placeholder="Short Description"></textarea>
+    `;
+  }
+}
+
+/* demo handlers */
+function handleSignup(){ closeModal(); showToast('Signup submitted — demo.'); }
+function handleLogin(){ closeModal(); showToast('Logged in — demo.'); }
+function submitContact(){
+  const name = document.getElementById('cname').value;
+  showToast(`Thanks ${name || ''}! We'll respond soon.`);
+  document.getElementById('contactForm').reset();
+}
+
+/* tiny toast */
+function showToast(msg){
+  const d = document.createElement('div');
+  d.textContent = msg;
+  Object.assign(d.style, {position:'fixed',left:'50%',transform:'translateX(-50%)',bottom:'26px',background:'rgba(0,0,0,0.7)',color:'white',padding:'10px 14px',borderRadius:'8px',zIndex:12000,transition:'opacity 300ms'});
+  document.body.appendChild(d);
+  setTimeout(()=> d.style.opacity = '0',2400);
+  setTimeout(()=> d.remove(),3000);
+}
+
+/* reveal on scroll basic */
+window.addEventListener('scroll', ()=> {
+  document.querySelectorAll('.reveal').forEach(el=>{
+    const r = el.getBoundingClientRect();
+    if(r.top < window.innerHeight * 0.85) el.classList.add('visible');
+  });
+});
+
+/* Safety: if user prefers reduced motion, quickly skip to site content */
+const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+if(mq.matches){
+  // skip intro altogether
+  introContainer.classList.add('hidden');
+  siteContent.style.opacity = '1';
+  document.querySelectorAll('.reveal').forEach((el, i) => setTimeout(()=> el.classList.add('visible'), i * 120));
+}
+</script>
 </body>
 </html>
-  
