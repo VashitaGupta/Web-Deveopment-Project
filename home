@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>KreatorKart — Home</title>
+
+<!-- Three.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#071226;      /* deep navy */
+    --card:#071a2e;
+    --accent:#00d4b8;   /* teal */
+    --accent-2:#ff3fa6; /* magenta-ish */
+    --muted:rgba(255,255,255,0.88);
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background: radial-gradient(1000px 400px at 8% 8%, rgba(0,212,184,0.03), transparent),
+                radial-gradient(700px 300px at 92% 82%, rgba(255,63,166,0.02), transparent),
+                var(--bg);
+    color:var(--muted);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+
+  /* ========== Full-screen 3D intro canvas ========== */
+  #introCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: block;
+    background: linear-gradient(180deg, rgba(7,18,38,0.6), rgba(7,18,38,0.9));
+  }
+  /* hidden after intro */
+  #introContainer.hidden { display:none; }
+
+  /* transition overlay fade */
+  .fade-away { transition: opacity 900ms cubic-bezier(.2,.9,.25,1); opacity:0; pointer-events:none; }
+
+  /* ========== Topbar ========== */
+  .topbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 28px;
+    max-width:1200px;
+    margin: 24px auto 0;
+    position:relative;
+    z-index:50;
+  }
+  .logo {
+    font-weight:900;
+    color:var(--accent);
+    letter-spacing:0.6px;
+    font-size:1.05rem;
+  }
+  .navlinks {
+    display:flex; gap:12px; align-items:center;
+  }
+  .navlinks a {
+    color:var(--muted);
+    text-decoration:none;
+    padding:8px 12px;
+    border-radius:8px; font-weight:600;
+  }
+  .navlinks a:hover{ color:var(--accent); }
+
+  /* ========== Main content ========== */
+  main { max-width:1200px; margin: 36px auto; padding: 0 20px; position:relative; z-index:10; }
+
+  /* Hero */
+  .hero {
+    display:grid;
+    grid-template-columns: 1fr 520px;
+    gap:28px;
+    align-items:center;
+  }
+  .hero-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:16px; padding:22px;
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .kicker { display:inline-block; padding:6px 12px; border-radius:999px; background: rgba(0,212,184,0.05); color:var(--accent); font-weight:700; }
+  .title {
+    font-weight:900; font-size: clamp(32px, 5vw, 56px); margin:8px 0; letter-spacing:-1px;
+    line-height:0.95;
+    color:linear-gradient;
+  }
+  .subtitle { color:rgba(255,255,255,0.9); margin-top:10px; font-size:1.05rem; }
+  .cta-row { margin-top:18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+
+  .btn {
+    padding:12px 18px; border-radius:12px; cursor:pointer; font-weight:800;
+    border:1px solid rgba(255,255,255,0.04);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    color:var(--muted);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn:hover{ transform:translateY(-6px); box-shadow: 0 18px 60px rgba(0,0,0,0.6); }
+  .btn-primary { background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#001; border:none; }
+
+  /* Right hero visual (placeholder for now) */
+  .visual {
+    border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,0.03);
+    height: 420px; display:flex; align-items:center; justify-content:center; position:relative;
+    box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+    background: linear-gradient(135deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+  }
+
+  .visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  /* Simple content sections */
+  .section { margin-top:34px; }
+  .grid3 { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; margin-top:14px; }
+  .feature {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px; padding:18px; border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 20px 40px rgba(0,0,0,0.5);
+  }
+  .feature h3{ color:var(--accent); margin-bottom:6px; }
+  .feature p{ color:rgba(255,255,255,0.9); }
+
+  /* Testimonials */
+  .testimonials { display:flex; gap:12px; margin-top:12px; overflow:hidden; }
+  .tcard {
+    min-width:280px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+  .tmeta { margin-top:10px; display:flex; gap:12px; align-items:center; }
+  .avatar { width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.04); }
+
+  /* Contact */
+  .contact-grid { display:grid; grid-template-columns: 1fr 340px; gap:18px; margin-top:14px; }
+  input, textarea, select { width:100%; padding:10px; border-radius:8px; border:none; background: rgba(255,255,255,0.02); color:white; }
+
+  /* Footer */
+  footer { margin-top:32px; padding:22px 20px; color:rgba(255,255,255,0.85); text-align:center; border-top:1px solid rgba(255,255,255,0.02); }
+
+  /* Responsiveness */
+  @media (max-width: 980px){ .hero { grid-template-columns: 1fr; } .visual { height:320px } .grid3{ grid-template-columns: repeat(2,1fr);} .contact-grid{ grid-template-columns:1fr;} }
+  @media (max-width:640px){ .grid3{ grid-template-columns:1fr } .topbar{ padding:12px } .hero-card{ padding:14px } }
+
+  /* little reveal */
+  .reveal { opacity:0; transform:translateY(12px); transition: all .6s cubic-bezier(.2,.9,.25,1); }
+  .reveal.visible { opacity:1; transform:none; }
+
+  /* small loader text */
+  .intro-text { color: rgba(255,255,255,0.85); font-weight:700; letter-spacing:0.6px; font-size:0.95rem; margin-top:12px; }
+</style>
+</head>
+<body>
+
+<!-- Intro 3D canvas wrapper -->
+<div id="introContainer">
+  <canvas id="introCanvas"></canvas>
+  <!-- overlay text while intro plays -->
+  <div style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:10000">
+    <div style="text-align:center">
+      <div style="font-weight:900;color:var(--accent);font-size:28px;letter-spacing:1px">KreatorKart</div>
+      <div class="intro-text">Aesthetic | Fast | Trustworthy</div>
+    </div>
+  </div>
+</div>
+
+<!-- Main site content (hidden under intro until reveal) -->
+<div id="siteContent" style="opacity:0; transition:opacity 900ms cubic-bezier(.2,.9,.25,1);">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="logo">KreatorKart</div>
+    <div class="navlinks">
+      <a href="#about">About Us</a>
+    </div>
+  </div>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero reveal" id="hero">
+      <div class="hero-card">
+        <div class="kicker">Trusted • Transparent • Fast</div>
+        <div class="title">Creators meet Brands — in minutes</div>
+        <div class="subtitle">Discover trusted influencers, see real metrics, and manage every collaboration in one seamless platform</div>
+
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="openModal('influencer')">I am an influencer</button>
+          <button class="btn" onclick="openModal('organization')">I'm a brand</button>
+        </div>
+      </div>
+
+      <div class="visual reveal">
+        <!-- User's image from their computer -->
+        <img src="file:///C:/Users/HP/OneDrive/Desktop/home.jpg" alt="KreatorKart Platform" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <!-- Fallback content if image doesn't load -->
+        <div style="text-align:center;color:rgba(255,255,255,0.9);padding:18px;display:none;">
+          <svg width="220" height="220" viewBox="0 0 200 200" fill="none" aria-hidden>
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0" stop-color="#00d4b8"/>
+                <stop offset="1" stop-color="#ff3fa6"/>
+              </linearGradient>
+            </defs>
+            <rect x="12" y="12" width="176" height="176" rx="22" fill="url(#g1)" opacity="0.12"></rect>
+            <g transform="translate(20,28)">
+              <!-- stylized cart icon -->
+              <rect x="10" y="44" width="140" height="52" rx="6" fill="#001f2a" opacity="0.6"></rect>
+              <rect x="14" y="18" width="110" height="36" rx="6" fill="#001f2a" opacity="0.5"></rect>
+              <circle cx="44" cy="110" r="10" fill="#001f2a" opacity="0.8"></circle>
+              <circle cx="120" cy="110" r="10" fill="#001f2a" opacity="0.8"></circle>
+            </g>
+          </svg>
+          <div style="margin-top:12px; font-weight:700">Cinematic Intro • Smooth UX</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section reveal">
+      <h2 style="color:var(--accent); margin:0">Highlights</h2>
+      <p style="color:rgba(255,255,255,0.86)">Designed for creators and startups — fast onboarding, verified insights, and transparent fees.</p>
+
+      <div class="grid3">
+        <div class="feature"><h3>Creator Onboarding</h3><p>Step-by-step profile creation with portfolio uploads and verification badges.</p></div>
+        <div class="feature"><h3>Smart Matching</h3><p>Filter by niche, audience, language and price for precise campaign fits.</p></div>
+        <div class="feature"><h3>Transparent Pricing</h3><p>Clear rates for reels, posts, stories, with negotiable options.</p></div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="section reveal">
+      <h2 style="color:var(--accent); margin:0">Testimonials</h2>
+      <p style="color:rgba(255,255,255,0.85)">Early adopters loved the speed and clarity.</p>
+
+      <div class="testimonials" id="testWrap">
+        <div class="tcard"><p>"We found the right creators in 48 hours, results within a week."</p>
+          <div class="tmeta"><img class="avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Riya"><div><strong>Riya Sharma</strong><div class="tiny">Founder, Little Sip Co.</div></div></div>
+        </div>
+        <div class="tcard"><p>"Onboarding is smooth and pricing is transparent."</p>
+          <div class="tmeta"><img class="avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Arjun"><div><strong>Arjun Mehta</strong><div class="tiny">Food Creator</div></div></div>
+        </div>
+        <div class="tcard"><p>"Verification badges helped us book confidently."</p>
+          <div class="tmeta"><img class="avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Neha"><div><strong>Neha Verma</strong><div class="tiny">Growth Lead</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section reveal">
+      <h2 style="color:var(--accent); margin:0">Contact</h2>
+      <p style="color:rgba(255,255,255,0.85)">Reach out for partnerships, demos or support.</p>
+
+      <div class="contact-grid">
+        <form id="contactForm" onsubmit="event.preventDefault(); submitContact();">
+          <input id="cname" placeholder="Your name" required />
+          <input id="cemail" placeholder="Email" type="email" required />
+          <select id="ctype"><option>General</option><option>Partnership</option><option>Support</option></select>
+          <textarea id="cmessage" placeholder="Message" required></textarea>
+          <button class="btn btn-primary" type="submit">Send Message</button>
+        </form>
+
+        <div style="padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0)); border:1px solid rgba(255,255,255,0.02);">
+          <h3 style="color:var(--accent); margin-top:0">Get in touch</h3>
+          <p class="tiny">support@kreatorkart.com<br>+91 99999 99999</p>
+          <p style="margin-top:12px">Office: IIM Rohtak Campus (Group 05)</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div style="max-width:1100px;margin:0 auto;padding:0 20px">
+        &copy; 2025 KreatorKart • Group 05, IIM Rohtak • <a href="#contact" style="color:var(--accent);text-decoration:none">Contact</a>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<!-- Modal forms preserved -->
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:11000;align-items:center;justify-content:center;">
+  <div style="width:92%;max-width:560px;background:linear-gradient(180deg,#071226,#0b2540);padding:18px;border-radius:12px;position:relative;border:1px solid rgba(255,255,255,0.03)">
+    <button onclick="closeModal()" style="position:absolute;right:12px;top:12px;background:none;border:none;color:white;font-size:20px;cursor:pointer">✖</button>
+    <h2 id="modalTitle" style="color:var(--accent);margin-top:0">Sign Up / Log In</h2>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button id="signupTab" onclick="switchTab('signup')" style="flex:1;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);color:white;font-weight:700">Sign Up</button>
+      <button id="loginTab" onclick="switchTab('login')" style="flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:white;font-weight:700">Log In</button>
+    </div>
+
+    <form id="signupForm" onsubmit="event.preventDefault(); handleSignup()" style="display:block">
+      <div id="signupFields"></div>
+      <button class="btn btn-primary" type="submit">Sign Up</button>
+    </form>
+
+    <form id="loginForm" onsubmit="event.preventDefault(); handleLogin()" style="display:none;margin-top:8px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input placeholder="Email or Username" required />
+        <input placeholder="Password" type="password" required />
+        <button class="btn btn-primary" type="submit">Log In</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ============================
+   3D Intro (procedural "AI" cart)
+   ============================ */
+
+const introCanvas = document.getElementById('introCanvas');
+const introContainer = document.getElementById('introContainer');
+const siteContent = document.getElementById('siteContent');
+
+let renderer;
+try {
+  // Scene / camera / renderer
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x061222);
+
+  renderer = new THREE.WebGLRenderer({ canvas: introCanvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio || 1);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const camera = new THREE.PerspectiveCamera(35, innerWidth/innerHeight, 0.1, 2000);
+  camera.position.set(0, 6, 18);
+
+  function onResize(){
+    const dpr = window.devicePixelRatio || 1;
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', onResize);
+  onResize();
+
+  // Lights
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.4);
+  scene.add(hemi);
+
+  const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+  dir.position.set(5, 20, 10);
+  dir.castShadow = true;
+  dir.shadow.mapSize.set(2048,2048);
+  dir.shadow.camera.left = -30; dir.shadow.camera.right = 30; dir.shadow.camera.top = 30; dir.shadow.camera.bottom = -10;
+  scene.add(dir);
+
+  // soft fill colored lights to give "AI" neon accents
+  const tealLight = new THREE.PointLight(0x00d4b8, 0.8, 40);
+  tealLight.position.set(-6, 4, 10);
+  scene.add(tealLight);
+  const pinkLight = new THREE.PointLight(0xff3fa6, 0.6, 40);
+  pinkLight.position.set(6, 2, -6);
+  scene.add(pinkLight);
+
+  // ground plane to receive shadow (invisible but receives)
+  const groundMat = new THREE.ShadowMaterial({ opacity: 0.22 });
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(200,200), groundMat);
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -2.8;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  /* Build a stylized cart from primitives */
+  function makeCart(){
+    const group = new THREE.Group();
+
+    // base platform
+    const baseGeo = new THREE.BoxGeometry(6.5, 0.45, 3.8);
+    const baseMat = new THREE.MeshStandardMaterial({ color:0x0b1b2a, metalness:0.25, roughness:0.35, emissive:0x00121b, emissiveIntensity:0.02 });
+    const base = new THREE.Mesh(baseGeo, baseMat);
+    base.position.set(0, -0.8, 0);
+    base.castShadow = true; base.receiveShadow = true;
+    group.add(base);
+
+    // basket (rounded)
+    const basketGeo = new THREE.BoxGeometry(5.8, 2.6, 3.2);
+    const basket = new THREE.Mesh(basketGeo, new THREE.MeshStandardMaterial({ color:0x0e2b3a, metalness:0.16, roughness:0.35 }));
+    basket.position.set(0, 0.6, 0);
+    basket.castShadow = true; basket.receiveShadow = true;
+    group.add(basket);
+
+    // top rim (accent)
+    const rimGeo = new THREE.TorusGeometry(2.9, 0.12, 16, 64);
+    const rimMat = new THREE.MeshStandardMaterial({ color:0x00d4b8, metalness:0.8, roughness:0.18, emissive:0x003f35, emissiveIntensity:0.08 });
+    const rim = new THREE.Mesh(rimGeo, rimMat);
+    rim.rotation.x = Math.PI / 2;
+    rim.position.set(0, 1.9, 0);
+    group.add(rim);
+
+    // handle column and bar
+    const handleMat = new THREE.MeshStandardMaterial({ color:0x1b2f3a, metalness:0.85, roughness:0.2 });
+    const cyl1 = new THREE.CylinderGeometry(0.12,0.12,2.5, 12);
+    const h1 = new THREE.Mesh(cyl1, handleMat); h1.position.set(-2.2, 1.6, -1.05); h1.rotation.z = Math.PI / 6;
+    const h2 = h1.clone(); h2.position.set(-2.2, 1.6, 1.05); h2.rotation.z = Math.PI / 6;
+    group.add(h1); group.add(h2);
+
+    // handle top bar
+    const barGeo = new THREE.CylinderGeometry(0.1,0.1,2.0,12);
+    const bar = new THREE.Mesh(barGeo, handleMat); bar.rotation.z = Math.PI/2; bar.position.set(-3.1, 2.05, 0);
+    group.add(bar);
+
+    // wheels - torus + inner hub
+    for(let i=-1;i<=1;i+=2){
+      const tor = new THREE.TorusGeometry(0.62, 0.14, 16, 64);
+      const torMat = new THREE.MeshStandardMaterial({ color:0x08121a, roughness:0.35, metalness:0.5 });
+      const wheel = new THREE.Mesh(tor, torMat);
+      wheel.rotation.x = Math.PI / 2;
+      wheel.position.set(i*2.2, -1.4, 1.6);
+      wheel.castShadow = true;
+      // hub
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.3,16), new THREE.MeshStandardMaterial({ color:0x00d4b8, emissive:0x003f35, emissiveIntensity:0.08 }));
+      hub.rotation.x = Math.PI / 2;
+      hub.position.copy(wheel.position);
+      group.add(wheel); group.add(hub);
+      // back wheels pair
+      const wheel2 = wheel.clone(); wheel2.position.z = -1.6; group.add(wheel2);
+      const hub2 = hub.clone(); hub2.position.z = -1.6; group.add(hub2);
+    }
+
+    // small accent plate front
+    const plate = new THREE.Mesh(new THREE.BoxGeometry(1.6,0.12,0.6), new THREE.MeshStandardMaterial({ color:0xff3fa6, emissive:0x2a001e, emissiveIntensity:0.06 }));
+    plate.position.set(3.0, 0.1, 0);
+    plate.rotation.z = -0.06;
+    group.add(plate);
+
+    // slight tilt for style
+    group.rotation.set(0.03, -0.6, 0.03);
+    group.scale.set(1.2,1.2,1.2);
+
+    group.traverse((m) => { if(m.isMesh){ m.castShadow = true; m.receiveShadow = true; }});
+    return group;
+  }
+
+  const cart = makeCart();
+  scene.add(cart);
+
+  // decorative subtle backdrop panels for premium look
+  const panelGeo = new THREE.BoxGeometry(24, 6, 1);
+  const panelMat = new THREE.MeshStandardMaterial({ color:0x06182a, metalness:0.0, roughness:0.9, opacity:0.65, transparent:true });
+  const backPanel = new THREE.Mesh(panelGeo, panelMat);
+  backPanel.position.set(0, -1.2, -10);
+  backPanel.rotation.x = 0.05;
+  scene.add(backPanel);
+
+  // camera path curve for cinematic travel
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-26, 2.8, 12),
+    new THREE.Vector3(-12, 3.2, 8),
+    new THREE.Vector3(-2, 2.0, 6),
+    new THREE.Vector3(6, 1.6, 3.5),
+    new THREE.Vector3(14, 1.2, 1.5),
+    new THREE.Vector3(28, 1.0, 0.6)
+  ]);
+
+  // Animate: cart rolls along a path
+  let startTime = null;
+  const introDuration = 4300; // ms for cinematic pass
+
+  function animateIntro(t){
+    if(!startTime) startTime = t;
+    const elapsed = t - startTime;
+    const progress = Math.min(1, elapsed / introDuration);
+
+    // position along curve
+    const pos = curve.getPoint(progress*0.95); // stop a bit earlier
+    cart.position.copy(pos);
+
+    // slight bobbing
+    cart.position.y += Math.sin(progress * Math.PI * 2) * 0.08;
+
+    // rotate slowly for "rolling" feel
+    cart.rotation.y = -Math.atan2(pos.z, pos.x) + (Math.sin(progress*6)*0.06);
+
+    // rotate wheels
+    cart.traverse((m) => {
+      if(m.geometry && m.geometry.type === 'TorusGeometry'){
+        m.rotation.y += 0.08 + progress*0.04;
+      }
+    });
+
+    // camera follows slightly behind
+    const camTarget = curve.getPoint(Math.max(0, progress*0.95 - 0.03));
+    camera.position.lerp(new THREE.Vector3(camTarget.x+8, camTarget.y+4.0, camTarget.z+10), 0.08);
+    camera.lookAt(cart.position.x, cart.position.y + 0.8, cart.position.z);
+
+    renderer.render(scene, camera);
+
+    if(progress < 1){
+      requestAnimationFrame(animateIntro);
+    } else {
+      // finish animation: do a small settle and fade to site
+      requestAnimationFrame(fadeOutIntro);
+    }
+  }
+
+  // fade out and reveal site
+  function fadeOutIntro(){
+    // small settle frames
+    let frames = 0;
+    function settle(){
+      frames++;
+      cart.rotation.x *= 0.98;
+      cart.rotation.z *= 0.98;
+      renderer.render(scene, camera);
+      if(frames < 8) requestAnimationFrame(settle);
+      else {
+        // fade overlay
+        introContainer.style.transition = 'opacity 900ms cubic-bezier(.2,.9,.25,1)';
+        introContainer.style.opacity = '0';
+        setTimeout(()=> {
+          introContainer.classList.add('hidden');
+          siteContent.style.opacity = '1';
+          // reveal page elements
+          document.querySelectorAll('.reveal').forEach((el, i) => setTimeout(()=> el.classList.add('visible'), i * 120));
+          // try to release GL resources (best-effort)
+          try {
+            if(renderer && renderer.getContext) {
+              const gl = renderer.getContext();
+              if (gl && gl.getExtension) {
+                // best-effort context loss
+                const ext = gl.getExtension('WEBGL_lose_context');
+                if (ext) ext.loseContext();
+              }
+            }
+          } catch(e){ /* ignore cleanup errors */ }
+        }, 920);
+      }
+    }
+    settle();
+  }
+
+  // Start the intro
+  requestAnimationFrame(animateIntro);
+
+  // If WebGL helper exists and WebGL is not available, skip intro
+  if(!(THREE.WEBGL && THREE.WEBGL.isWebGLAvailable && THREE.WEBGL.isWebGLAvailable())){
+    console.warn('WebGL unavailable — skipping intro.');
+    introContainer.classList.add('hidden');
+    siteContent.style.opacity = '1';
+    document.querySelectorAll('.reveal').forEach((el, i) => setTimeout(()=> el.classList.add('visible'), i * 120));
+  }
+
+} catch(err){
+  console.error('Intro initialization failed — skipping intro.', err);
+  // fallback: reveal site content
+  introContainer.classList.add('hidden');
+  siteContent.style.opacity = '1';
+  document.querySelectorAll('.reveal').forEach((el, i) => setTimeout(()=> el.classList.add('visible'), i * 120));
+}
+
+/* ============================
+   Preserve modal & forms (user/brand flows)
+   ============================ */
+const modal = document.getElementById('modal');
+const signupFields = document.getElementById('signupFields');
+let currentType = 'influencer';
+function openModal(type){
+  currentType = type;
+  modal.style.display = 'flex';
+  document.getElementById('modalTitle').textContent = type === 'influencer' ? 'Influencer Portal' : 'Organization Portal';
+  loadSignup(type);
+}
+function closeModal(){ modal.style.display = 'none'; }
+function switchTab(tab){
+  document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+}
+function loadSignup(type){
+  if(type === 'influencer'){
+    signupFields.innerHTML = `
+      <input placeholder="Full Name" required />
+      <input placeholder="Age" type="number" />
+      <input placeholder="Email" type="email" required />
+      <input placeholder="Phone Number" />
+      <input placeholder="Username" />
+      <input placeholder="Password" type="password" />
+      <input placeholder="Instagram Handle" />
+      <input placeholder="Followers Count" type="number" />
+      <input placeholder="Category / Niche" />
+      <input placeholder="Rate for Story ($)" type="number" />
+      <input placeholder="Rate for Reel ($)" type="number" />
+    `;
+  } else {
+    signupFields.innerHTML = `
+      <input placeholder="Brand Name" required />
+      <input placeholder="Email" type="email" required />
+      <input placeholder="Phone Number" />
+      <input placeholder="Username" />
+      <input placeholder="Password" type="password" />
+      <input placeholder="Industry" />
+      <input placeholder="Website" type="url" />
+      <textarea placeholder="Short Description"></textarea>
+    `;
+  }
+}
+
+/* demo handlers */
+function handleSignup(){ closeModal(); showToast('Signup submitted — demo.'); }
+function handleLogin(){ closeModal(); showToast('Logged in — demo.'); }
+function submitContact(){
+  const name = document.getElementById('cname').value;
+  showToast(`Thanks ${name || ''}! We'll respond soon.`);
+  document.getElementById('contactForm').reset();
+}
+
+/* tiny toast */
+function showToast(msg){
+  const d = document.createElement('div');
+  d.textContent = msg;
+  Object.assign(d.style, {position:'fixed',left:'50%',transform:'translateX(-50%)',bottom:'26px',background:'rgba(0,0,0,0.7)',color:'white',padding:'10px 14px',borderRadius:'8px',zIndex:12000,transition:'opacity 300ms'});
+  document.body.appendChild(d);
+  setTimeout(()=> d.style.opacity = '0',2400);
+  setTimeout(()=> d.remove(),3000);
+}
+
+/* reveal on scroll basic */
+window.addEventListener('scroll', ()=> {
+  document.querySelectorAll('.reveal').forEach(el=>{
+    const r = el.getBoundingClientRect();
+    if(r.top < window.innerHeight * 0.85) el.classList.add('visible');
+  });
+});
+
+/* Safety: if user prefers reduced motion, quickly skip to site content */
+const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+if(mq.matches){
+  // skip intro altogether
+  introContainer.classList.add('hidden');
+  siteContent.style.opacity = '1';
+  document.querySelectorAll('.reveal').forEach((el, i) => setTimeout(()=> el.classList.add('visible'), i * 120));
+}
+</script>
+</body>
+</html>
