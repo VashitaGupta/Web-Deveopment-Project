@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>KreatorKart — About Us</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#071226;
+    --card:#071a2e;
+    --accent:#00d4b8;
+    --accent-2:#ff3fa6;
+    --muted:rgba(255,255,255,0.88);
+    --glass: rgba(255,255,255,0.03);
+    --text-light: rgba(255,255,255,0.9);
+    --text-dim: rgba(255,255,255,0.7);
+  }
+  
+  *{box-sizing:border-box}
+  html,body{height:100%; margin:0}
+  
+  body{
+    font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background: radial-gradient(1000px 400px at 8% 8%, rgba(0,212,184,0.03), transparent),
+                radial-gradient(700px 300px at 92% 82%, rgba(255,63,166,0.02), transparent),
+                var(--bg);
+    color:var(--muted);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+    line-height:1.6;
+  }
+
+  /* Topbar */
+  .topbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 28px;
+    max-width:1200px;
+    margin: 24px auto 0;
+    position:relative;
+    z-index:50;
+  }
+  .logo {
+    font-weight:900;
+    color:var(--accent);
+    letter-spacing:0.6px;
+    font-size:1.05rem;
+    text-decoration: none;
+  }
+  .navlinks {
+    display:flex; gap:12px; align-items:center;
+  }
+  .navlinks a {
+    color:var(--muted);
+    text-decoration:none;
+    padding:8px 12px;
+    border-radius:8px; 
+    font-weight:600;
+    transition: color 0.3s ease;
+  }
+  .navlinks a:hover{ color:var(--accent); }
+
+  /* Main container */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 28px;
+  }
+
+  /* Hero section */
+  .hero-section {
+    text-align: center;
+    margin-bottom: 80px;
+    padding: 60px 0;
+    position: relative;
+  }
+
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 2px;
+  }
+
+  .hero-title {
+    font-size: clamp(48px, 8vw, 72px);
+    font-weight: 900;
+    margin: 40px 0 24px;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    max-width: 600px;
+    margin: 0 auto;
+    font-weight: 400;
+  }
+
+  /* Content sections */
+  .content-section {
+    margin-bottom: 100px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  .content-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-title {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 32px;
+    letter-spacing: -1px;
+  }
+
+  .section-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+  }
+
+  /* Grid layouts */
+  .two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 80px;
+  }
+
+  .three-col-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 60px;
+  }
+
+  /* Cards */
+  .feature-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border-radius: 20px;
+    padding: 40px 32px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+
+  .feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .card-content {
+    color: var(--text-light);
+    line-height: 1.7;
+  }
+
+  /* Values section */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin-top: 60px;
+  }
+
+  .value-item {
+    background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid rgba(255,255,255,0.04);
+    position: relative;
+  }
+
+  .value-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 900;
+    color: #001;
+  }
+
+  .value-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+
+  .value-desc {
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* Visual elements */
+  .visual-element {
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border-radius: 20px;
+    padding: 60px 40px;
+    border: 1px solid rgba(255,255,255,0.04);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-element::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0,212,184,0.05) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .stats-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 40px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    color: var(--text-dim);
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* Call to action */
+  .cta-section {
+    text-align: center;
+    padding: 80px 40px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-top: 100px;
+  }
+
+  .cta-title {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    color: var(--text-light);
+    margin-bottom: 20px;
+  }
+
+  .cta-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin: 0 12px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #001;
+    box-shadow: 0 10px 30px rgba(0,212,184,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,212,184,0.4);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-light);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-4px);
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 80px;
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-dim);
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  /* Responsive */
+  @media (max-width: 980px) {
+    .two-col-grid, .three-col-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    
+    .values-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .container {
+      padding: 20px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stats-container {
+      flex-direction: column;
+      gap: 30px;
+    }
+    
+    .topbar {
+      padding: 12px 20px;
+    }
+  }
+
+  /* Scroll animations */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <a href="/" class="logo">KreatorKart</a>
+  <div class="navlinks">
+    <a href="/">Home</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Hero Section -->
+  <section class="hero-section fade-in">
+    <h1 class="hero-title">About Us</h1>
+    <p class="hero-subtitle">Bridging the gap between emerging brands and talented influencers with transparency and innovation</p>
+  </section>
+
+  <!-- Who We Are -->
+  <section class="content-section fade-in">
+    <div class="two-col-grid">
+      <div>
+        <h2 class="section-title">Who We Are</h2>
+        <div class="section-content">
+          <p>KreatorKart is a platform designed to bridge the gap between emerging brands and talented influencers. Born out of the <strong>Indian Institute of Management, Rohtak</strong> as a web development project, our mission is to make influencer-brand collaborations simple, transparent, and accessible for everyone.</p>
+        </div>
+      </div>
+      <div class="visual-element">
+        <div class="stats-container">
+          <div class="stat">
+            <span class="stat-number">∞</span>
+            <span class="stat-label">Connections</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Platform Access</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Transparent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Mission -->
+  <section class="content-section fade-in">
+    <div class="two-col-grid">
+      <div class="visual-element">
+        <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+          <defs>
+            <linearGradient id="missionGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#00d4b8;stop-opacity:0.8"/>
+              <stop offset="100%" style="stop-color:#ff3fa6;stop-opacity:0.8"/>
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="100" r="80" stroke="url(#missionGrad)" stroke-width="4" fill="none" opacity="0.3"/>
+          <circle cx="100" cy="100" r="60" stroke="url(#missionGrad)" stroke-width="3" fill="none" opacity="0.5"/>
+          <circle cx="100" cy="100" r="40" stroke="url(#missionGrad)" stroke-width="2" fill="none" opacity="0.7"/>
+          <circle cx="100" cy="100" r="20" fill="url(#missionGrad)" opacity="0.9"/>
+          <path d="M85 100 L95 110 L115 85" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="section-title">Our Mission</h2>
+        <div class="section-content">
+          <p style="font-size:1.3rem; font-weight:600; color:var(--accent); margin-bottom:20px;">To connect startups with the right influencers — and influencers with the right opportunities — through a structured, user-friendly, and transparent platform.</p>
+          <p>We believe that every brand, regardless of size, deserves access to authentic influencer partnerships that drive real results.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Story -->
+  <section class="content-section fade-in">
+    <h2 class="section-title">Our Story</h2>
+    <div class="section-content" style="max-width:900px; margin:0 auto; text-align:center;">
+      <p style="font-size:1.2rem; margin-bottom:30px;">The idea for KreatorKart came from a common challenge: <strong>early-stage startups struggle to find creators within budget, while micro and mid-tier influencers struggle to get discovered.</strong></p>
+      
+      <p>Our team set out to solve this by building a space where influencers can showcase their work, clearly state their rates, and receive serious, organized collaboration requests. For brands, KreatorKart offers an easy-to-use discovery tool that filters influencers based on category, budget, and audience size — eliminating the guesswork from influencer marketing.</p>
+    </div>
+  </section>
+
+  <!-- What We Offer -->
+  <section class="content-section fade-in">
+    <h2 class="section-title">What We Offer</h2>
+    <div class="three-col-grid">
+      <div class="feature-card">
+        <h3 class="card-title">For Influencers</h3>
+        <div class="card-content">
+          <p>A public profile to showcase content, list rates, and connect with brands actively seeking collaborations. Build your personal brand and grow your business.</p>
+          <ul style="margin-top:20px; padding-left:20px; color:var(--text-dim);">
+            <li>Portfolio showcase</li>
+            <li>Transparent rate listing</li>
+            <li>Direct brand connections</li>
+            <li>Verification badges</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <h3 class="card-title">For Brands</h3>
+        <div class="card-content">
+          <p>A curated pool of verified influencers with transparent pricing, easy filtering, and direct contact options. Find the perfect match for your campaigns.</p>
+          <ul style="margin-top:20px; padding-left:20px; color:var(--text-dim);">
+            <li>Advanced filtering</li>
+            <li>Verified creator profiles</li>
+            <li>Budget-based search</li>
+            <li>Campaign management</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <h3 class="card-title">Platform Benefits</h3>
+        <div class="card-content">
+          <p>A seamless experience that brings structure to influencer marketing, making it efficient and accessible for everyone involved.</p>
+          <ul style="margin-top:20px; padding-left:20px; color:var(--text-dim);">
+            <li>No hidden fees</li>
+            <li>Secure transactions</li>
+            <li>24/7 support</li>
+            <li>Analytics dashboard</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why It Matters -->
+  <section class="content-section fade-in">
+    <div class="two-col-grid">
+      <div>
+        <h2 class="section-title">Why It Matters</h2>
+        <div class="section-content">
+          <p style="font-size:1.2rem; font-weight:600; color:var(--accent-2); margin-bottom:20px;">Influencer marketing is no longer just for big brands — it's a vital growth channel for small businesses and D2C startups.</p>
+          <p>KreatorKart gives structure to a messy, unorganized process, making influencer marketing more efficient, accessible, and impactful. We're democratizing access to authentic partnerships that drive real business results.</p>
+        </div>
+      </div>
+      <div class="visual-element">
+        <svg width="240" height="180" viewBox="0 0 240 180" fill="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#00d4b8;stop-opacity:0.8"/>
+              <stop offset="100%" style="stop-color:#ff3fa6;stop-opacity:0.8"/>
+            </linearGradient>
+          </defs>
+          <!-- Chart bars representing growth -->
+          <rect x="20" y="140" width="25" height="30" fill="url(#chartGrad)" opacity="0.6"/>
+          <rect x="55" y="120" width="25" height="50" fill="url(#chartGrad)" opacity="0.7"/>
+          <rect x="90" y="90" width="25" height="80" fill="url(#chartGrad)" opacity="0.8"/>
+          <rect x="125" y="60" width="25" height="110" fill="url(#chartGrad)" opacity="0.9"/>
+          <rect x="160" y="30" width="25" height="140" fill="url(#chartGrad)"/>
+          <rect x="195" y="10" width="25" height="160" fill="url(#chartGrad)"/>
+          <!-- Trend line -->
+          <path d="M30 155 Q60 135 95 105 T160 45 T220 25" stroke="#00d4b8" stroke-width="3" fill="none" opacity="0.8"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Values -->
+  <section class="content-section fade-in">
+    <h2 class="section-title">Our Values</h2>
+    <div class="values-grid">
+      <div class="value-item">
+        <div class="value-icon">T</div>
+        <h3 class="value-title">Transparency</h3>
+        <p class="value-desc">Clear pricing and open communication. No hidden fees, no surprises — just honest business practices that build trust.</p>
+      </div>
+      
+      <div class="value-item">
+        <div class="value-icon">A</div>
+        <h3 class="value-title">Accessibility</h3>
+        <p class="value-desc">A platform that works for both big and small players. Whether you're a startup or an enterprise, micro or macro influencer — we've got you covered.</p>
+      </div>
+      
+      <div class="value-item">
+        <div class="value-icon">E</div>
+        <h3 class="value-title">Efficiency</h3>
+        <p class="value-desc">Simplifying the search, negotiation, and collaboration process. Spend less time on logistics and more time creating amazing content.</p>
+      </div>
+      
+      <div class="value-item">
+        <div class="value-icon">P</div>
+        <h3 class="value-title">Empowerment</h3>
+        <p class="value-desc">Helping influencers and brands grow together. We provide the tools and platform for mutual success and long-term partnerships.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section fade-in">
+    <h2 class="cta-title">Ready to Transform Your Collaborations?</h2>
+    <p class="cta-subtitle">Join thousands of creators and brands already using KreatorKart to build meaningful partnerships</p>
+    <div style="margin-top:40px;">
+      <a href="/" class="btn btn-primary">Get Started Today</a>
+      <a href="#contact" class="btn btn-secondary">Learn More</a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div style="max-width:1200px; margin:0 auto; padding:0 28px;">
+    <p>&copy; 2025 KreatorKart • Group 05, IIM Rohtak • Built with passion for creators and brands</p>
+  </div>
+</footer>
+
+<script>
+// Scroll animations
+function observeElements() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.fade-in, .content-section').forEach(el => {
+    observer.observe(el);
+  });
+}
+
+// Initialize when DOM is loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', observeElements);
+} else {
+  observeElements();
+}
+
+// Add some interactive hover effects
+document.querySelectorAll('.feature-card').forEach(card => {
+  card.addEventListener('mouseenter', function() {
+    this.style.transform = 'translateY(-12px) scale(1.02)';
+  });
+  
+  card.addEventListener('mouseleave', function() {
+    this.style.transform = 'translateY(-8px) scale(1)';
+  });
+});
+
+// Smooth scrolling for navigation
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
