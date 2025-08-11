@@ -993,7 +993,7 @@ function displayInfluencers(influencers) {
           <div class="price-tag">Contact</div>
           <div class="price-inr">₹${convertToINR(influencer.price).toLocaleString()} INR</div>
         </div>
-        <button class="pay-now-btn" onclick="event.stopPropagation(); contactInfluencer('${influencer.name}')">Pay Now</button>
+        <button class="pay-now-btn" onclick="window.location.href='payment.html'">Pay Now</button>
       </div>
     </div>
   `).join('');
