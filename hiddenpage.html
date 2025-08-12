@@ -1,5 +1,314 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-  <title>Hidden Page</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Hidden Page</title>
+<style>
+  :root{
+    --bg:#071226;      /* deep navy */
+    --card:#071a2e;
+    --accent:#00d4b8;   /* teal */
+    --accent-2:#ff3fa6; /* magenta-ish */
+    --muted:rgba(255,255,255,0.88);
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background: radial-gradient(1000px 400px at 8% 8%, rgba(0,212,184,0.03), transparent),
+                radial-gradient(700px 300px at 92% 82%, rgba(255,63,166,0.02), transparent),
+                var(--bg);
+    color:var(--muted);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+
+    h2 {
+        text-align: center;
+        color: #f4f5f2;
+        margin-bottom: 20px;
+    }
+    table {
+        width: 90%;
+        margin: auto;
+        border-collapse: collapse;
+        background-color: rgb(8, 8, 8);
+        box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #007BFF;
+        color: white;
+        font-size: 16px;
+    }
+    tr:hover {
+        background-color: #d5f71a;
+        color:#071226;
+    }
+    a {
+        color: #007BFF;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+    }
+</style>
+</head>
+<body>
+
+<h2>Meet Our Team</h2>
+
+<table>
+    <tr>
+        <th>Roll No.</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>LinkedIn</th>
+        <th>Photo</th>
+    </tr>
+    <tr>
+        <td>IPM05068</td>
+        <td>Vashita Gupta</td>
+        <td>Team Lead</td>
+        <td><a href="www.linkedin.com/in/vashita-gupta-4b7a82286" target="_blank">View Profile</a></td>
+        <td><img src="https://via.placeholder.com/60" alt="Vashita Gupta"></td>
+    </tr>
+    <tr>
+        <td>IMP05030</td>
+        <td>Hardik Kumar</td>
+        <td>Developer</td>
+        <td><a href="https://www.linkedin.com/in/hardik-kumar-8613122a2/" target="_blank">View Profile</a></td>
+        <td><img src="https://via.placeholder.com/60" alt="Hardik Kumar"></td>
+    </tr>
+    <tr>
+        <td>IPM05043</td>
+        <td>Mudit Mohan</td>
+        <td>Designer</td>
+        <td><a href="https://www.linkedin.com/in/mudit-mohan-766b1a294/" target="_blank">View Profile</a></td>
+        <td><img src="https://via.placeholder.com/60" alt="Mudit Mohan"></td>
+    </tr>
+    <tr>
+        <td>IPM05182</td>
+        <td>Shruti Bhutada</td>
+        <td>Designer</td>
+        <td><a href="https://www.linkedin.com/in/shruti-bhutada-8a0239220/" target="_blank">View Profile</a></td>
+        <td><img src="https://via.placeholder.com/60" alt="Shruti Bhutada"></td>
+    </tr>
+    <tr>
+        <td>IPM05171</td>
+        <td>Agastya Naorem</td>
+        <td>Designer</td>
+        <td><a href="https://www.linkedin.com/in/agastya-naorem/" target="_blank">View Profile</a></td>
+        <td><img src="https://via.placeholder.com/60" alt="Agastya Naorem"></td>
+    </tr>
+    
+</table>
+
+<h2>Rationale</h2>
+<br>
+<br>
+
+<h3 align=" center">Home Page</h3>
+<div style="display: flex; align-items: center;">
+
+<img src="C:\Users\PAYAL\Downloads\home.jpg" style="width:500px; height:auto; margin-right:20px;">
+ <p style="margin: 0; padding: 10px;  flex: 1;">
+<b>1. Logo (KreatorKart):</b>
+The logo is placed at the top-left for quick brand recognition. The green color pops against the dark background, symbolizing growth, trust, and creativity.
+<br>
+<br>
+<b>2. Headline & CTA Buttons: </b>
+The bold headline clearly explains what the platform does. Two buttons — one for influencers and one for brands — guide visitors straight to their relevant action.
+<br>
+<br>
+<b>3. Hero Illustration:</b>
+The main image uses purple and blue tones to represent creativity, trust, and modern technology. It makes the homepage feel friendly and engaging.
+<br>
+<br>
+<b>4. Highlights Section:</b>
+Three cards present the main features — onboarding, smart matching, and transparent pricing — in a quick, scannable way so users understand the benefits fast.
+<br>
+<br>
+<b>5. Testimonials:</b>
+User quotes with names and photos add authenticity and show that real people trust the platform.
+<br>
+<br>
+<b>6. Contact Section:</b>
+A simple form lets users send messages easily, while email, phone, and office address give other contact options.
+<br>
+<br>
+<b>7. Footer:</b>
+Contains copyright details and essential links, designed to be minimal so it doesn’t distract from the main content.
+<br>
+<br>
+<b>8. Navigation Link:</b>
+An “About Us” link in the top-right makes it easy for visitors to learn more about the brand.
+</p>
+</div>
+<br>
+<h3 align="center">About Us Page</h3>
+<div style="display: flex; align-items: stretch;">
+    
+    <!-- LEFT SIDE: TEXT -->
+    <p style="margin: 0; padding: 10px; flex: 1; color: white; background: none;">
+        <b>1. About Us Heading:</b>
+        Sets the tone instantly, letting visitors know exactly where they are. The large, bold text stands out strongly against the dark background, ensuring it’s unmissable.
+        <br><br>
+        <b>2. Who We Are:</b>
+        A concise introduction that builds credibility and connects the brand to its audience. It’s placed prominently so users understand your identity right away.
+        <br><br>
+        <b>3. Our Mission:</b>
+        Communicates the core driving force behind your work. The fade-up effect gives it emphasis, making it feel important and inspiring.
+        <br><br>
+        <b>4. Our Story:</b>
+        Creates a personal connection by sharing your journey. The darker layout makes imagery and text appear more vivid, helping visitors engage emotionally.
+        <br><br>
+        <b>5. What We Offer:</b>
+        Highlights your services and solutions clearly. The staggered animation makes each offering feel like a reveal, increasing curiosity and retention.
+        <br><br>
+        <b>6. Why It Matters:</b>
+        Explains the relevance of your work in a broader context. Its placement in the middle keeps the narrative flowing logically.
+        <br><br>
+        <b>7. Our Values:</b>
+        Reinforces brand personality and ethics, attracting like-minded visitors. Bright icons or highlights against the dark background ensure each value is memorable.
+        <br><br>
+        <b>8. Call to Action:</b>
+        High-contrast button grabs attention and drives immediate engagement. The animation subtly encourages clicks without feeling intrusive.
+        <br><br>
+        <b>9.Office Location:</b>
+        Adds authenticity by showing your physical presence. The simple, clean design fits the overall professional tone while making contact easy.
+    </p>
+
+    <!-- RIGHT SIDE: IMAGES STACKED -->
+    <div style="display: flex; flex-direction: column; flex: 0.30; margin-left: 20px;">
+        <img src="C:\Users\PAYAL\Downloads\about us 1.jpg" style="flex: 0.30; object-fit: cover; width: 100%;">
+        <img src="C:\Users\PAYAL\Downloads\about us 2.jpg" style="flex: 0.30; object-fit: cover; width: 100%;">
+        <img src="C:\Users\PAYAL\Downloads\about us 3.jpg" style="flex: 0.30; object-fit: cover; width: 100%;">
+    </div>
+</div>
+
+
+<h3 align="center">Dashboard</h3>
+<div style="display: flex; align-items: center;">
+    
+    <img src="C:\Users\PAYAL\Downloads\DASHBOARD.jpg" alt="Dashboard"
+         style="width:500px; height:auto; margin-right:20px;">
+    
+    <p style="margin: 0; padding: 10px;  flex: 1;">
+        <b>1. Search Bar:</b> Allows users to quickly find influencers by name, domain, or location for ease of navigation.<br><br>
+
+        <b>2. Sort Dropdown:</b> Enables users to sort influencer listings by relevance or other criteria to find the best match.<br><br>
+
+        <b>3. Age Range Slider:</b> Filters influencers by age group to target specific demographics.<br><br>
+
+        <b>4. Domain Filters (Checkboxes):</b> Multi-select options allow users to filter influencers by industry or interest area.<br><br>
+
+        <b>5. Price Range Slider:</b> Lets users filter influencers by their price per video to fit different budget ranges.<br><br>
+
+        <b>6. Instagram Followers Checkboxes:</b> Allows filtering influencers based on follower count to assess influencer reach.<br><br>
+
+        <b>7. Location Filters:</b> Filters influencers based on geographical location to target specific markets.<br><br>
+
+        <b>8. Instagram Followers Count (Per Influencer Card):</b> Displays influencer's Instagram reach, a key metric for users evaluating influence.<br><br>
+
+        <b>9. LinkedIn Followers Count (Per Influencer Card):</b> Shows LinkedIn reach, indicating professional influence and credibility.<br><br>
+
+        <b>10. Contact and Pay Now Buttons:</b> Call-to-action buttons for direct engagement or payment facilitate quick decision-making.<br><br>
+
+        <b>11. Tooltip Popup:</b> Provides quick access to key influencer info on hover without cluttering the card.
+    </p>
+</div>
+
+<h3 align="center">Messages</h3>
+<div style="display: flex; align-items: stretch;">
+    <p style="margin: 0; padding: 10px; flex: 1; color: white; background: none;">
+        <b>1.Search Conversations Bar:</b> Allows quick filtering of conversations, saving time when locating specific chats.  
+        Placed at the top for immediate visibility, with a clean rectangular field and subtle contrast for focus.  
+        <br><br>
+
+        <b>2.New Chat Button:</b> Gives users an instant way to start fresh conversations without navigating elsewhere.  
+        Bright gradient green color and rounded shape make it stand out against the dark background.  
+        <br><br>
+
+        <b>3.Conversation List with Avatars & Status Indicators:</b> Displays name, category, and last message snippet for easy recognition of chats.  
+        Circular avatars with gradient backgrounds and small online status dots enhance recognition and modern aesthetics.  
+        <br><br>
+
+        <b>4.Unread Message Badges:</b> Notifies users of pending messages, prioritizing engagement with active conversations.  
+        Small, high-contrast pink circles make unread counts immediately noticeable without clutter.  
+        <br><br>
+
+        <b>5.Selected Conversation Prompt:</b> Guides users to select a conversation when none is open, reducing confusion.  
+        Minimal grey icon and text keep the area clean and avoid distraction when no chat is active.  
+        <br><br>
+
+        <b>6.Two-Panel Layout:</b> Keeps the conversation list always visible while viewing or starting new chats.  
+        Split-screen design with a clear divider ensures logical grouping and easy navigation.  
+    </p>
+
+    <img src="C:\Users\PAYAL\Downloads\Screenshot (39).png" style="width: 50%; height: 100%; object-fit: contain; margin-left: 20px;">
+</div>
+
+<h3 align="center">Payment</h3>
+<div style="display: flex; align-items: flex-start; gap: 20px;">
+    <img src="C:\Users\PAYAL\Downloads\Screenshot (41).png" style="width: 400px; height: auto; object-fit: contain;">
+    <p style="max-width: 600px; color: white;">
+
+<b>Page Title – “Book Your Influencer”:</b> Clearly communicates the primary action of the page and sets context for users.  
+Large bold font with white text against a dark background for maximum contrast and easy visibility.  
+
+<br><br>
+
+<b>Influencer Card (Left Section):</b> Provides influencer name, niche, rating, and pricing details to help users make an informed choice.  
+Card layout with padding, dark background, and rounded corners for a clean, modern feel that separates it from the background.  
+
+<br><br>
+
+<b>“What You’ll Get” List:</b> Lists deliverables so users know exactly what they’re purchasing.  
+Green checkmarks for positive reinforcement and teal text for readability without harsh brightness.  
+
+<br><br>
+
+<b>Audience Demographics Box:</b> Gives audience statistics (followers, gender split, engagement rate) to evaluate influencer relevance.  
+Teal box with slight glow to draw attention while keeping harmony with the color theme.  
+
+<br><br>
+
+<b>Order Summary Card (Right Section):</b> Summarizes total costs and savings to promote transparency.  
+Compact layout with clear separation of price details using color-coded discounts and totals.  
+
+<br><br>
+
+<b>Payment Method Options:</b> Allows users to choose their preferred transaction mode quickly.  
+Icon-based buttons for instant recognition and hover effects to signal interactivity.  
+
+<br><br>
+
+<b>Billing Information Form:</b> Captures essential customer details for processing payment.  
+Minimal, clean input fields with consistent spacing to maintain readability and reduce cognitive load.  
+
+<br><br>
+
+<b>“Book Influencer” Button:</b> Final call-to-action for confirming purchase.  
+Bright pink background to stand out from the dark UI, with bold text for visibility.  
+
+</p>
+
+</div>
+</body>
+</html>
+
