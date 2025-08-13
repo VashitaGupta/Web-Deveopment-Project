@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitemap - KreatorKart</title>
+    <meta name="description" content="Complete sitemap of KreatorKart - Find all pages and navigate easily through our creator-brand collaboration platform.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .sitemap-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .sitemap-header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sitemap-header p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .sitemap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .sitemap-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .sitemap-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .sitemap-section h2 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sitemap-section h2::before {
+            content: "📋";
+            font-size: 1.2rem;
+        }
+
+        .page-list {
+            list-style: none;
+        }
+
+        .page-list li {
+            margin-bottom: 0.8rem;
+        }
+
+        .page-list a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .page-list a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+            text-decoration: underline;
+        }
+
+        .page-list a::before {
+            content: "→";
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .back-home a {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-home a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .sitemap-header h1 {
+                font-size: 2rem;
+            }
+            
+            .sitemap-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="sitemap-header">
+            <h1>Site Navigation</h1>
+            <p>Explore all pages of KreatorKart - Your complete guide to our creator-brand collaboration platform</p>
+        </header>
+
+        <div class="sitemap-grid">
+            <section class="sitemap-section">
+                <h2>Main Pages</h2>
+                <ul class="page-list">
+                    <li><a href="index.html">Homepage</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="how-it-works.html">How It Works</a></li>
+                    <li><a href="services.html">Our Services</a></li>
+                </ul>
+            </section>
+
+            <section class="sitemap-section">
+                <h2>For Creators</h2>
+                <ul class="page-list">
+                    <li><a href="creators.html">Creator Dashboard</a></li>
+                    <li><a href="creator-onboarding.html">Creator Onboarding</a></li>
+                    <li><a href="creator-portfolio.html">Portfolio Setup</a></li>
+                </ul>
+            </section>
+
+            <section class="sitemap-section">
+                <h2>For Brands</h2>
+                <ul class="page-list">
+                    <li><a href="brands.html">Brand Dashboard</a></li>
+                    <li><a href="brand-campaigns.html">Create Campaign</a></li>
+                    <li><a href="smart-matching.html">Smart Matching</a></li>
+                </ul>
+            </section>
+
+            <section class="sitemap-section">
+                <h2>Information</h2>
+                <ul class="page-list">
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="testimonials.html">Testimonials</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="support.html">Support</a></li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="back-home">
+            <a href="index.html">← Back to Homepage</a>
+        </div>
+    </div>
+</body>
+</html>
